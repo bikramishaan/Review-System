@@ -15,6 +15,7 @@ import pytz
 def home_page():
     return render_template('home.html')
 
+''' Manual User Regsitration Route'''
 @app.route("/register", methods=['GET', 'POST'])
 def register_page():
     form = RegisterForm()
@@ -36,6 +37,7 @@ def register_page():
 
     return render_template('register.html', form=form)
 
+''' Manual User Login Route'''
 @app.route("/login", methods=['GET', 'POST'])
 def login_page():
     form = LoginForm()
@@ -51,7 +53,8 @@ def login_page():
 
     return render_template('login.html', form=form)
 
-'''  The login required function has to include here.'''
+
+'''  The login required function to check if the google user is in session or not.'''
 
 def login_is_required(function):
   def wrapper(*args, **kwargs):
@@ -62,7 +65,6 @@ def login_is_required(function):
 
   return wrapper
 
-'''  The login required function has to call here.'''
 
 @app.route('/EventPage')
 def Event_page():
@@ -80,9 +82,8 @@ def logout_page():
     flash('You have been logged out!', category='info')
     return redirect(url_for('login_page'))
 
-''' From Here, google authentication code was written from here.
+''' Google authentication code was written from here.
     '''
-
 
 @app.route('/google_login')
 def google_login():
@@ -141,4 +142,4 @@ def callback():
   print(session["Picture_url"])
   print(session["First_Name"])
 
-  return redirect("/EventPage")
+  return redirect("/Google_Wait")
