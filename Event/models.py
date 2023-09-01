@@ -1,7 +1,8 @@
 from Event import db, login_manager
 from Event import bcrypt
 from flask_login import UserMixin
-
+from datetime import datetime
+import pytz
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -13,10 +14,14 @@ class User(db.Model, UserMixin):
     full_name = db.Column(db.String(length=50), nullable=False)
     email_address = db.Column(db.String(length=50), nullable=False, unique=True)
     google_id = db.Column(db.String(length=50), nullable=True, unique=True)
-    password_hash = db.Column(db.String(length=60), nullable=False)
+    password_hash = db.Column(db.String(length=60), nullable=True)
     profile_picture_url = db.Column(db.String(length=100), nullable=True)
-    Created_at = db.Column(db.DateTime(), default=db.func.current_timestamp(), nullable=False)
-    last_login = db.Column(db.DateTime(), nullable=True)
+    Created_at = db.Column(db.DateTime(), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')), nullable=False)
+    last_login = db.Column(db.DateTime(), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')), nullable=True)
+
+    def update_last_login(self):
+        self.last_login = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata'))
+        db.session.commit()
 
     @property
     def password(self):
@@ -29,6 +34,3 @@ class User(db.Model, UserMixin):
     def check_password_correction(self, attempted_password):
         return bcrypt.check_password_hash(self.password_hash, attempted_password)
 
-    def update_last_login(self):
-        self.last_login = datetime().utcnow()
-        db.session.commit()

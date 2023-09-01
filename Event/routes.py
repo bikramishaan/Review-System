@@ -7,7 +7,8 @@ from flask_login import login_user, logout_user, login_required, current_user
 from flask_dance.contrib.google import google
 from google.oauth2 import id_token
 import google.auth.transport.requests
-
+from datetime import datetime
+import pytz
 
 @app.route('/')
 @app.route('/home')
@@ -91,6 +92,7 @@ def google_login():
 
 @app.route("/callback")
 def callback():
+
   flow.fetch_token(authorization_response=request.url)
 
   if not session["state"] == request.args["state"]:
@@ -108,34 +110,31 @@ def callback():
 
   existing_user = User.query.filter_by(google_id=id_info.get("sub")).first()
 
-    if not existing_user:
-        # Create a new user in the database using Google-authenticated data
-        new_user = User(
-            username=id_info.get("sub"),  # You can use the Google sub as the username
-            full_name=id_info.get("name"),
-            email_address=id_info.get("email"),
-            google_id=id_info.get("sub"),  # Store Google ID for future reference
-            profile_picture_url=id_info.get("picture"),
-            created_at = datetime.utcnow(),
-            last_login = 
+  if not existing_user:
+    # Create a new user in the database using Google-authenticated data
+    new_user = User(
+        username=id_info.get("sub"),  # You can use the Google sub as the username
+        full_name=id_info.get("name"),
+        email_address=id_info.get("email"),
+        google_id=id_info.get("email"),  # Store Google ID for future reference
+        profile_picture_url=id_info.get("picture"),
+        Created_at = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')),
+        last_login = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata'))
         )
-        db.session.add(new_user)
-        db.session.commit()
+    db.session.add(new_user)
+    db.session.commit()
+    new_user.update_last_login()
 
 
   session["google_id"] = id_info.get("sub")
   session["name"] = id_info.get("name")
   session["Email_id"] = id_info.get("email")
   session["Picture_url"] = id_info.get("picture")
-  session["Issued_at"] = id_info.get("iat")
-  session["auth_time"] = id_info.get("auth_time")
   session["First_Name"] = id_info.get("given_name")
   session["Last_Name"] = id_info.get("family_name")
 
   print(session["Email_id"])
   print(session["Picture_url"])
-  print(session["Issued_at"])
-  print(session["auth_time"])
   print(session["First_Name"])
 
   return redirect("/EventPage")
