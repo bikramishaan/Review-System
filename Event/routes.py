@@ -116,7 +116,7 @@ def callback():
         username=id_info.get("sub"),  # You can use the Google sub as the username
         full_name=id_info.get("name"),
         email_address=id_info.get("email"),
-        google_id=id_info.get("email"),  # Store Google ID for future reference
+        google_id=id_info.get("sub"),  # Store Google ID for future reference
         profile_picture_url=id_info.get("picture"),
         Created_at = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')),
         last_login = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata'))
@@ -124,6 +124,10 @@ def callback():
     db.session.add(new_user)
     db.session.commit()
     new_user.update_last_login()
+
+  else: 
+    existing_user.update_last_login()
+
 
 
   session["google_id"] = id_info.get("sub")
