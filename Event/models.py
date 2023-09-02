@@ -14,10 +14,12 @@ class User(db.Model, UserMixin):
     full_name = db.Column(db.String(length=50), nullable=False)
     email_address = db.Column(db.String(length=50), nullable=False, unique=True)
     google_id = db.Column(db.String(length=50), nullable=True, unique=True)
-    password_hash = db.Column(db.String(length=60), nullable=True)
+    hash_password = db.Column(db.String(length=60), nullable=True)
     profile_picture_url = db.Column(db.String(length=100), nullable=True)
     Created_at = db.Column(db.DateTime(), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')), nullable=False)
     last_login = db.Column(db.DateTime(), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')), nullable=True)
+    verification_token = db.Column(db.String(32), unique=True)
+    is_verified = db.Column(db.Boolean, default=False)
 
     def update_last_login(self):
         self.last_login = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata'))
@@ -25,12 +27,12 @@ class User(db.Model, UserMixin):
 
     @property
     def password(self):
-        return self.password
+        return self.hash_password
 
     @password.setter
     def password(self, plain_text_password):
-        self.password_hash = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
+        self.hash_password = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
 
     def check_password_correction(self, attempted_password):
-        return bcrypt.check_password_hash(self.password_hash, attempted_password)
+        return bcrypt.check_password_hash(self.hash_password, attempted_password)
 

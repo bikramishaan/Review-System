@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from flask_dance.contrib.google import make_google_blueprint, google
 import smtplib
 from google_auth_oauthlib.flow import Flow
+from flask_mail import Mail
 
 
 import os
@@ -22,6 +23,15 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login_page"
 login_manager.login_message_category = "info" 
 
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587  # Port for sending email
+app.config['MAIL_USERNAME'] = 'bharat.aggarwal@iic.ac.in'  # Your email address
+app.config['MAIL_PASSWORD'] = 'ihldipgiadbmyvat'    # os.environ.get("Email_Password")  Your email password
+app.config['MAIL_USE_TLS'] = True  # Use TLS for secure connection
+app.config['MAIL_USE_SSL'] = False  # Use SSL (only if required)
+
+
+mail = Mail(app)
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
