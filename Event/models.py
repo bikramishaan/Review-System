@@ -35,4 +35,4 @@ class User(db.Model, UserMixin):
 
     def check_password_correction(self, attempted_password):
         return bcrypt.check_password_hash(self.hash_password, attempted_password)
-
+        

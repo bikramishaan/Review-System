@@ -23,7 +23,7 @@ def register_page():
     form = RegisterForm()
     token = None
 
-    if form.validate_on_submit():
+    if form.validate_on_submit() and check_recaptcha():
         user_to_create = User(username=form.username.data,
                               full_name = form.full_name.data,
                               email_address=form.email_address.data,
@@ -43,6 +43,8 @@ def register_page():
 
         return redirect(url_for('redirect_page'))
 
+    else:
+        flash(f'CAPTCHA verification failed. Please try again.', category='danger')
 
         '''
         login_user(user_to_create)
