@@ -22,14 +22,15 @@ def home_page():
 def register_page():
     form = RegisterForm()
     token = None
-
-    if form.validate_on_submit() and check_recaptcha():
+    #and check_recaptcha()
+    
+    if form.validate_on_submit():
         user_to_create = User(username=form.username.data,
                               full_name = form.full_name.data,
                               email_address=form.email_address.data,
                               password=form.password1.data
                               )
-
+                                                
         token = generate_verification_token(user_to_create.email_address)
         print(token)
         user_to_create.verification_token=token
