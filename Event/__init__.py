@@ -29,8 +29,11 @@ app.config['MAIL_PASSWORD'] = 'ihldipgiadbmyvat'    # os.environ.get("Email_Pass
 app.config['MAIL_USE_TLS'] = True  # Use TLS for secure connection
 app.config['MAIL_USE_SSL'] = False  # Use SSL (only if required)
 
+app.config['RECAPTCHA_USE_SSL'] = False
 app.config['RECAPTCHA_PUBLIC_KEY'] = '6LeOcvMnAAAAAEmKmPn2yCTxRHbZe-HSdUJVU_FX'
 app.config['RECAPTCHA_PRIVATE_KEY'] = '6LeOcvMnAAAAAA4Ba-ffAEQVdV6krESc9aTHWaU1'
+app.config['RECPATCHA_OPTIONS'] = {'theme':'black'}
+
 
 mail = Mail(app)
 

@@ -11,6 +11,9 @@ from datetime import datetime
 import pytz
 import secrets
 from flask_mail import Message
+import requests
+
+
 
 @app.route('/')
 @app.route('/home')
@@ -22,33 +25,45 @@ def home_page():
 def register_page():
     form = RegisterForm()
     token = None
-    #and check_recaptcha()
     
     if form.validate_on_submit():
-        user_to_create = User(username=form.username.data,
+           recaptcha_response = request.form.get('g-recaptcha-response')
+           secret_key = '6LeOcvMnAAAAAA4Ba-ffAEQVdV6krESc9aTHWaU1'
+
+           data = {
+               'secret': secret_key,
+               'response': recaptcha_response,
+           }
+
+           response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+           result = response.json()
+
+           if result['success']:
+               user_to_create = User(username=form.username.data,
                               full_name = form.full_name.data,
                               email_address=form.email_address.data,
                               password=form.password1.data
                               )
                                                 
-        token = generate_verification_token(user_to_create.email_address)
-        print(token)
-        user_to_create.verification_token=token
-        db.session.add(user_to_create)
-        db.session.commit()
-        verification_link = url_for('verify_email', token=token, _external=True)
+               token = generate_verification_token(user_to_create.email_address)
+               print(token)
+               user_to_create.verification_token=token
+               db.session.add(user_to_create)
+               db.session.commit()
+               verification_link = url_for('verify_email', token=token, _external=True)
 
-        msg = Message('Verify Your Email', sender='bharat.aggarwal@iic.ac.in', recipients=[user_to_create.email_address])
-        msg.body = f'Click on the following link to verify your email: {verification_link}'
-        mail.send(msg)
+               msg = Message('Verify Your Email', sender='bharat.aggarwal@iic.ac.in', recipients=[user_to_create.email_address])
+               msg.body = f'Click on the following link to verify your email: {verification_link}'
+               mail.send(msg)
 
-        return redirect(url_for('redirect_page'))
+               return redirect(url_for('redirect_page'))
+           
+           else:
+               flash('reCaptcha verification failed. Please try again.', category='danger')
 
-    else:
-        flash(f'CAPTCHA verification failed. Please try again.', category='danger')
-
-        '''
-        login_user(user_to_create)
+    
+        
+    '''    login_user(user_to_create)
 
         flash(f"Account Created Successfully! You are now logged in as {user_to_create.username}", category='success')
 
@@ -68,6 +83,7 @@ def generate_verification_token(email):
     user.verification_token = token'''
 
     return token
+
 
 ''' Manual User Login Route'''
 @app.route("/login", methods=['GET', 'POST'])
