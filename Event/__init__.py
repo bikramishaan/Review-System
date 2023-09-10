@@ -3,9 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_dance.contrib.google import make_google_blueprint, google
-import smtplib
 from google_auth_oauthlib.flow import Flow
 from flask_mail import Mail
+from flask_wtf import CSRFProtect
 
 import os
 import pathlib
@@ -18,6 +18,7 @@ app.config['SQLALCHEMY_POOL_SIZE'] = 10
 app.config['SECRET_KEY'] = 'c9a7c56baa2482c0465082e4'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+csrf = CSRFProtect(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login_page"
 login_manager.login_message_category = "info" 
@@ -30,8 +31,8 @@ app.config['MAIL_USE_TLS'] = True  # Use TLS for secure connection
 app.config['MAIL_USE_SSL'] = False  # Use SSL (only if required)
 
 app.config['RECAPTCHA_USE_SSL'] = False
-app.config['RECAPTCHA_PUBLIC_KEY'] = '6LeOcvMnAAAAAEmKmPn2yCTxRHbZe-HSdUJVU_FX'
-app.config['RECAPTCHA_PRIVATE_KEY'] = '6LeOcvMnAAAAAA4Ba-ffAEQVdV6krESc9aTHWaU1'
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6LdCjhAoAAAAAEaLtoMUXZe9Z1Ax0UwCF7qP3gD0'
+app.config['RECAPTCHA_PRIVATE_KEY'] = '6LdCjhAoAAAAAPl5hO22mP8--Erm1FQUladGgvS8'
 app.config['RECPATCHA_OPTIONS'] = {'theme':'black'}
 
 

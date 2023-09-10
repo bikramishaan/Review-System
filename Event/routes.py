@@ -28,15 +28,16 @@ def register_page():
     
     if form.validate_on_submit():
            recaptcha_response = request.form.get('g-recaptcha-response')
-           secret_key = '6LeOcvMnAAAAAA4Ba-ffAEQVdV6krESc9aTHWaU1'
+           secret_key = '6LdCjhAoAAAAAPl5hO22mP8--Erm1FQUladGgvS8'
 
            data = {
                'secret': secret_key,
                'response': recaptcha_response,
            }
 
-           response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+           response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data, timeout=10)
            result = response.json()
+           print(result)
 
            if result['success']:
                user_to_create = User(username=form.username.data,

@@ -20,7 +20,7 @@ class RegisterForm(FlaskForm):
     email_address = StringField(label='Email Address:', validators=[Email(), DataRequired()])
     password1 = PasswordField(label='Password:', validators=[Length(min=6), DataRequired()])
     password2 = PasswordField(label='Confirm Password:', validators=[EqualTo('password1'), DataRequired()])
-    recaptcha = RecaptchaField()    
+    recaptcha = RecaptchaField(render_kw = {'data-sitekey': '6LdCjhAoAAAAAEaLtoMUXZe9Z1Ax0UwCF7qP3gD0'}) 
     submit = SubmitField(label='Create Account')
 
 class LoginForm(FlaskForm):
