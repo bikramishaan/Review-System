@@ -8,6 +8,16 @@
         <div class="col-md-5 p-lg-5 mx-auto my-5">
             <h1 class="display-4 font-weight-normal">Congratulations!</h1>
             <p class="lead font-weight-normal">You are Successfully logged in.</p>
+            <div class="container mt-5">
+                <h2 class="mb-4">Upload Your Document</h2>
+                <form action="/upload" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="fileInput" class="form-label">Select a document:</label>
+                        <input type="file" class="form-control" id="fileInput" name="file">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+            </div>           
         </div>
         <div class="product-device box-shadow d-none d-md-block"></div>
         <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>

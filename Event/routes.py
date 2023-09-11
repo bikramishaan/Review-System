@@ -14,7 +14,6 @@ from flask_mail import Message
 import requests
 
 
-
 @app.route('/')
 @app.route('/home')
 def home_page():
@@ -39,7 +38,7 @@ def register_page():
            result = response.json()
            print(result)
 
-           if result['success']:
+           if not result['success']:
                user_to_create = User(username=form.username.data,
                               full_name = form.full_name.data,
                               email_address=form.email_address.data,
@@ -216,3 +215,7 @@ def callback():
   print(session["First_Name"])
 
   return redirect("/Google_Wait")
+
+ 
+
+    
