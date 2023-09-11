@@ -13,7 +13,6 @@ import secrets
 from flask_mail import Message
 import requests
 
-
 @app.route('/')
 @app.route('/home')
 def home_page():
