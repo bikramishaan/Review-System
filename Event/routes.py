@@ -214,7 +214,3 @@ def callback():
   print(session["First_Name"])
 
   return redirect("/Google_Wait")
-
- 
-
-    
