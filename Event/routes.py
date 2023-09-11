@@ -214,3 +214,23 @@ def callback():
   print(session["First_Name"])
 
   return redirect("/Google_Wait")
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_document():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part', 'danger')
+            return redirect(request.url)
+
+        file = request.files['file']
+
+        if file.filename == '':
+            flash('No selected file', 'danger')
+            return redirect(request.url)
+
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+
+        flash('File uploaded successfully', 'success')
+        return redirect(url_for('home_page'))
+
+    return render_template('upload.html')

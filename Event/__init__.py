@@ -5,7 +5,7 @@ from flask_login import LoginManager
 from flask_dance.contrib.google import make_google_blueprint, google
 from google_auth_oauthlib.flow import Flow
 from flask_mail import Mail
-from flask_wtf import CSRFProtect
+from flask_wtf.csrf import CSRFProtect
 
 import os
 import pathlib
@@ -16,6 +16,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Event.db'
 app.config['SQLALCHEMY_POOL_SIZE'] = 10 
 app.config['SECRET_KEY'] = 'c9a7c56baa2482c0465082e4'
+csrf = CSRFProtect(app)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 csrf = CSRFProtect(app)
@@ -29,6 +30,7 @@ app.config['MAIL_USERNAME'] = 'bharat.aggarwal@iic.ac.in'  # Your email address
 app.config['MAIL_PASSWORD'] = 'ihldipgiadbmyvat'    # os.environ.get("Email_Password")  Your email password
 app.config['MAIL_USE_TLS'] = True  # Use TLS for secure connection
 app.config['MAIL_USE_SSL'] = False  # Use SSL (only if required)
+app.config['UPLOAD_FOLDER'] = 'uploads'
 
 app.config['RECAPTCHA_USE_SSL'] = False
 app.config['RECAPTCHA_PUBLIC_KEY'] = '6LdCjhAoAAAAAEaLtoMUXZe9Z1Ax0UwCF7qP3gD0'
