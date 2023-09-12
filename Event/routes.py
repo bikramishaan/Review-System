@@ -1,8 +1,8 @@
 from Event import app
 from flask import render_template, redirect, url_for, flash, request, session, abort
 from Event.models import User
-from Event.forms import RegisterForm, LoginForm
-from Event import db, flow, GOOGLE_CLIENT_ID, mail
+from Event.forms import RegisterForm, LoginForm, UploadFileForm
+from Event import db, flow, GOOGLE_CLIENT_ID, mail, ALLOWED_EXTENSIONS
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_dance.contrib.google import google
 from google.oauth2 import id_token
@@ -12,6 +12,8 @@ import pytz
 import secrets
 from flask_mail import Message
 import requests
+from werkzeug.utils import secure_filename
+import os
 
 @app.route('/')
 @app.route('/home')
@@ -115,9 +117,26 @@ def login_is_required(function):
   return wrapper
 
 
-@app.route('/EventPage')
+@app.route('/EventPage', methods=["GET", "POST"])
 def Event_page():
-    return render_template('EventPage.html')
+    upload_form = UploadFileForm()
+    if upload_form.validate_on_submit():
+        file = upload_form.file.data
+
+        if file.filename == '':
+            flash('No file selected for uploading')
+            return redirect(request.url)
+        
+        if file and allowed_file(file.filename):
+            file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
+            flash('File has been Succesfully uploaded.','success')
+        else:
+            flash('File did not uploaded!!! Allowed file types are txt, pdf, png, jpg, jpeg, gif', 'danger')
+            return redirect(request.url)
+    return render_template('EventPage.html', form=upload_form)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/Google_Wait')
 @login_is_required
@@ -214,23 +233,3 @@ def callback():
   print(session["First_Name"])
 
   return redirect("/Google_Wait")
-
-@app.route('/upload', methods=['GET', 'POST'])
-def upload_document():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            flash('No file part', 'danger')
-            return redirect(request.url)
-
-        file = request.files['file']
-
-        if file.filename == '':
-            flash('No selected file', 'danger')
-            return redirect(request.url)
-
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-
-        flash('File uploaded successfully', 'success')
-        return redirect(url_for('home_page'))
-
-    return render_template('upload.html')
