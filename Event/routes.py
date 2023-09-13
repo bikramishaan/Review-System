@@ -117,8 +117,12 @@ def login_is_required(function):
   return wrapper
 
 
-@app.route('/EventPage', methods=["GET", "POST"])
+@app.route('/EventPage')
 def Event_page():
+    return render_template('EventPage.html')
+
+@app.route('/hackathon', methods=['GET', 'POST'])
+def hackathon_page():
     upload_form = UploadFileForm()
     if upload_form.validate_on_submit():
         file = upload_form.file.data
@@ -133,7 +137,9 @@ def Event_page():
         else:
             flash('File did not uploaded!!! Allowed file types are txt, pdf, png, jpg, jpeg, gif', 'danger')
             return redirect(request.url)
-    return render_template('EventPage.html', form=upload_form)
+    return render_template('hackathon.html', form=upload_form)
+    
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
