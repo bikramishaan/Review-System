@@ -4,6 +4,13 @@
 {% endblock %}
 
 {%block content %}
+<style>
+    .form-signin {
+        margin: 0 auto;
+        max-width: 600px; /* Adjust the maximum width as needed */
+        text-align: left; /* Adjust text alignment within the form */
+    }
+</style>
 <body class="text-center">
     <div class="container">
         <form method="POST" class="form-signin" style="color:white">
@@ -15,10 +22,10 @@
             </h1>
             <br>
             {{ form.username.label() }}
-            {{ form.username(class="form-control", placeholder="User Name") }}
+            {{ form.username(class="form-control", placeholder="") }}
 
             {{ form.password.label() }}
-            {{ form.password(class="form-control", placeholder="Password") }}
+            {{ form.password(class="form-control", placeholder="") }}
 
             <br>
 
@@ -26,15 +33,17 @@
 
             <br>
 
-            <a href="{{ url_for('google_login') }}" class="btn btn-primary">Sign Up with Google</a>
+            <div class="container text-center">
+                <a href="{{ url_for('google_login') }}" class="btn btn-primary">Sign Up with Google</a>
 
-            <br><br>
+                <br><br>
 
-            <div class="checkbox nb-3">
-                <h6>Do not have an account?</h6>
-                <a class="btn btn-sm btn-secondary" href="{{ url_for('register_page') }}" >Register</a>
+                <div class="checkbox nb-3">
+                    <h6>Do not have an account?</h6>
+                    <a class="btn btn-sm btn-secondary" href="{{ url_for('register_page') }}" >Register</a>
+                </div>
             </div>
-
+            <br><br>
         </form>
     </div>
 </body>

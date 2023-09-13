@@ -4,6 +4,13 @@
 {% endblock %}s
 
 {%block content %}
+<style>
+    .form-register {
+        margin: 0 auto;
+        max-width: 600px; /* Adjust the maximum width as needed */
+        text-align: left; /* Adjust text alignment within the form */
+    }
+</style>
 <body class="text-center">
     <div class="container">
         <form action="?" method="POST" class="form-register" style="color:white">
@@ -11,23 +18,23 @@
             <br><br>
             <img class="mb-4 rounded-circle" src="../static/Images/InReview logo with bg.png" width="200" height="200" alt="">
             <h1>
-                Please Create Your Account
+                Please Create Your Account  
             </h1>
             <br>
             {{ form.username.label() }}
-            {{ form.username(class="form-control", placeholder="User Name") }}
+            {{ form.username(class="form-control", placeholder="") }}
 
             {{ form.full_name.label() }}
-            {{ form.full_name(class="form-control", placeholder="Full Name") }}
+            {{ form.full_name(class="form-control", placeholder="") }}
 
             {{ form.email_address.label() }}
-            {{ form.email_address(class="form-control", placeholder="Email Address") }}
+            {{ form.email_address(class="form-control", placeholder="") }}
 
             {{ form.password1.label() }}
-            {{ form.password1(class="form-control", placeholder="Password") }}
+            {{ form.password1(class="form-control", placeholder="") }}
 
             {{ form.password2.label() }}
-            {{ form.password2(class="form-control", placeholder="Confirm Password") }}
+            {{ form.password2(class="form-control", placeholder="") }}
 
             <br>
 
@@ -39,15 +46,17 @@
             {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
 
             <br>
-
-            <a href="{{ url_for('google_login') }}" class="btn btn-primary">Sign Up with Google</a>
-
+            <div class="container text-center">
+                <a href="{{ url_for('google_login') }}" class="btn btn-primary">Sign Up with Google</a>
             <br><br>
 
-            <div class="checkbox nb-3">
-                <h6>Already have an account?</h6>
-                <a class="btn btn-sm btn-secondary" href="{{ url_for('login_page') }}" >Login</a>
+                <div class="checkbox nb-3">
+                    <h6>Already have an account?</h6>
+                    <a class="btn btn-sm btn-secondary" href="{{ url_for('login_page') }}" >Login</a>
+                </div>
             </div>
+
+            <br><br>
 
         </form>
     </div>
