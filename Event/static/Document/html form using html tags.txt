@@ -1,0 +1,14 @@
+ <!-- <form method="POST" enctype='multipart/form-data'>
+      {{ form.hidden_tag() }}  
+      {{ form.file() }}
+      {{ form.submit() }}
+    </form> --->
+
+<!--
+{% if form.file() %}
+<h3>Uploaded Image</h3>
+<img src="{{ file }}" alt="Uploaded Image">
+{% else %}
+<h3>Image will be render here...</h3>
+{% endif %}
+-->  
