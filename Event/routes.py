@@ -112,10 +112,9 @@ def login_is_required(function):
     if "google_id" not in session: 
       return abort(401) # Authorizaion Required
     else:
-      return function()
+        return function()
 
   return wrapper
-
 
 @app.route('/EventPage')
 def Event_page():
@@ -144,7 +143,7 @@ def hackathon_page():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/Google_Wait')
+@app.route('/google-wait')
 @login_is_required
 def Event_page_google():
     return redirect(url_for('Event_page'))
@@ -184,13 +183,16 @@ def logout_page():
 @app.route('/google_login')
 def google_login():
     authorization_url, state = flow.authorization_url()
+    print(authorization_url)
     session["state"] = state
-    return redirect(authorization_url) 
+    print(state)
+    return redirect(authorization_url)
 
 @app.route("/callback")
 def callback():
 
   flow.fetch_token(authorization_response=request.url)
+  print(flow)
 
   if not session["state"] == request.args["state"]:
     abort(500)
@@ -238,4 +240,4 @@ def callback():
   print(session["Picture_url"])
   print(session["First_Name"])
 
-  return redirect("/Google_Wait")
+  return redirect("/google-wait")
