@@ -75,7 +75,7 @@ def register_page():
                 for err_msg in form.errors.values():
                     flash(f'There was an error with creating a user: {err_msg}', category='danger')'''
 
-        return render_template('register.html', form=form)
+    return render_template('register.html', form=form)
 
 def generate_verification_token(email):
     token = secrets.token_hex(16) #Generate a random token
