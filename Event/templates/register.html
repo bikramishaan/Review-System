@@ -6,9 +6,9 @@
 {%block content %}
 <style>
     .form-register {
-        margin: 0 auto;
-        max-width: 600px; /* Adjust the maximum width as needed */
-        text-align: left; /* Adjust text alignment within the form */
+    margin: 0 auto;
+    max-width: 600px; /* Adjust the maximum width as needed */
+    text-align: left; /* Adjust text alignment within the form */
     }
 </style>
 <body class="text-center">
@@ -67,7 +67,7 @@
 
             <div class="g-recaptcha" data-sitekey="{{ form.recaptcha.render_kw['data-sitekey'] }}"></div>
 
-            
+
             <br>
 
             {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
@@ -75,7 +75,7 @@
             <br><br>
             <div class="container text-center">
                 <a href="{{ url_for('google_login') }}" class="btn btn-primary">Sign Up with Google</a>
-            <br><br>
+                <br><br>
 
                 <div class="checkbox nb-3">
                     <h6>Already have an account?</h6>
