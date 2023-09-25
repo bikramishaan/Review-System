@@ -116,7 +116,7 @@ def login_is_required(function):
 
     return wrapper
 
-@app.route('/EventPage')
+@app.route('/event-page')
 def Event_page():
     return render_template('EventPage.html')
 
@@ -180,7 +180,7 @@ def logout_page():
 ''' Google authentication code was written from here.
     '''
 
-@app.route('/google_login')
+@app.route('/google-login')
 def google_login():
     authorization_url, state = flow.authorization_url()
     print(authorization_url)
