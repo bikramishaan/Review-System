@@ -48,16 +48,16 @@ GOOGLE_CLIENT_ID = "184802851527-oadfjba853a0c8l7jdvpmmgmd6u1vg81.apps.googleuse
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
 
 flow = Flow.from_client_secrets_file(
-  client_secrets_file=client_secrets_file,
-  scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
-  redirect_uri = "http://127.0.0.1:5000/callback"
-  )
+    client_secrets_file=client_secrets_file,
+    scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
+    redirect_uri = "http://127.0.0.1:5000/callback"
+)
 
 
 '''google_bp = make_google_blueprint(client_id='184802851527-oadfjba853a0c8l7jdvpmmgmd6u1vg81.apps.googleusercontent.com',
-                                  client_secret='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',
-                                  redirect_to='google_login',
-                                  )
+                                    client_secret='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',
+                                    redirect_to='google_login',
+                                    )
 app.register_blueprint(google_bp, url_prefix='/google_login')
 '''
 
@@ -65,9 +65,9 @@ app.register_blueprint(google_bp, url_prefix='/google_login')
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
 
 flow =  Flow.from_client_secrets_file(
-  client_secrets_file=client_secrets_file,
-  scopes =["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
-  redirect_uri="http://127.0.0.1:5000/EventPage"
+    client_secrets_file=client_secrets_file,
+    scopes =["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
+    redirect_uri="http://127.0.0.1:5000/EventPage"
   )
 '''
 

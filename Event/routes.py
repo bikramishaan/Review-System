@@ -25,57 +25,57 @@ def home_page():
 def register_page():
     form = RegisterForm()
     token = None
-    
+
     if form.validate_on_submit():
-           recaptcha_response = request.form.get('g-recaptcha-response')
-           secret_key = '6LdCjhAoAAAAAPl5hO22mP8--Erm1FQUladGgvS8'
+        recaptcha_response = request.form.get('g-recaptcha-response')
+        secret_key = '6LdCjhAoAAAAAPl5hO22mP8--Erm1FQUladGgvS8'
 
-           data = {
-               'secret': secret_key,
-               'response': recaptcha_response,
-           }
+        data = {
+        'secret': secret_key,
+        'response': recaptcha_response,
+        }
 
-           response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data, timeout=10)
-           result = response.json()
-           print(result)
+        response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data, timeout=10)
+        result = response.json()
+        print(result)
 
-           if not result['success']:
-               user_to_create = User(username=form.username.data,
-                              full_name = form.full_name.data,
-                              email_address=form.email_address.data,
-                              password=form.password1.data
-                              )
-                                                
-               token = generate_verification_token(user_to_create.email_address)
-               print(token)
-               user_to_create.verification_token=token
-               db.session.add(user_to_create)
-               db.session.commit()
-               verification_link = url_for('verify_email', token=token, _external=True)
-
-               msg = Message('Verify Your Email', sender='bharat.aggarwal@iic.ac.in', recipients=[user_to_create.email_address])
-               msg.body = f'Click on the following link to verify your email: {verification_link}'
-               mail.send(msg)
-
-               return redirect(url_for('redirect_page'))
-           
-           else:
-               flash('reCaptcha verification failed. Please try again.', category='danger')
-
-    
+        if not result['success']:
+            user_to_create = User(username=form.username.data,
+                full_name = form.full_name.data,
+                email_address=form.email_address.data,
+                password=form.password1.data
+                )
         
-    '''    login_user(user_to_create)
+            token = generate_verification_token(user_to_create.email_address)
+            print(token)
+            user_to_create.verification_token=token
+            db.session.add(user_to_create)
+            db.session.commit()
+            verification_link = url_for('verify_email', token=token, _external=True)
 
-        flash(f"Account Created Successfully! You are now logged in as {user_to_create.username}", category='success')
+            msg = Message('Verify Your Email', sender='bharat.aggarwal@iic.ac.in', recipients=[user_to_create.email_address])
+            msg.body = f'Click on the following link to verify your email: {verification_link}'
+            mail.send(msg)
 
-        return redirect(url_for('Event_page'))
-        '''
+            return redirect(url_for('redirect_page'))
 
-    '''if form.errors != {}:       #If there are no errors from the validations.
-        for err_msg in form.errors.values():
-            flash(f'There was an error with creating a user: {err_msg}', category='danger')'''
+        else:
+            flash('reCaptcha verification failed. Please try again.', category='danger')
 
-    return render_template('register.html', form=form)
+
+
+            '''login_user(user_to_create)
+
+            flash(f"Account Created Successfully! You are now logged in as {user_to_create.username}", category='success')
+
+            return redirect(url_for('Event_page'))
+            '''
+
+            '''if form.errors != {}:       #If there are no errors from the validations.
+                for err_msg in form.errors.values():
+                    flash(f'There was an error with creating a user: {err_msg}', category='danger')'''
+
+        return render_template('register.html', form=form)
 
 def generate_verification_token(email):
     token = secrets.token_hex(16) #Generate a random token
@@ -105,16 +105,16 @@ def login_page():
     return render_template('login.html', form=form)
 
 
-'''  The login required function to check if the google user is in session or not.'''
+    '''The login required function to check if the google user is in session or not.'''
 
 def login_is_required(function):
-  def wrapper(*args, **kwargs):
-    if "google_id" not in session: 
-      return abort(401) # Authorizaion Required
-    else:
-        return function()
+    def wrapper(*args, **kwargs):
+        if "google_id" not in session: 
+            return abort(401) # Authorizaion Required
+        else:
+            return function()
 
-  return wrapper
+    return wrapper
 
 @app.route('/EventPage')
 def Event_page():
@@ -129,7 +129,7 @@ def hackathon_page():
         if file.filename == '':
             flash('No file selected for uploading')
             return redirect(request.url)
-        
+
         if file and allowed_file(file.filename):
             file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
             flash('File has been Succesfully uploaded.','success')
@@ -137,7 +137,7 @@ def hackathon_page():
             flash('File did not uploaded!!! Allowed file types are txt, pdf, png, jpg, jpeg, gif', 'danger')
             return redirect(request.url)
     return render_template('hackathon.html', form=upload_form)
-    
+
 
 
 def allowed_file(filename):
@@ -191,53 +191,53 @@ def google_login():
 @app.route("/callback")
 def callback():
 
-  flow.fetch_token(authorization_response=request.url)
-  print(flow)
+    flow.fetch_token(authorization_response=request.url)
+    print(flow)
 
-  if not session["state"] == request.args["state"]:
-    abort(500)
+    if not session["state"] == request.args["state"]:
+        abort(500)
 
-  credentials = flow.credentials
-  token_request = google.auth.transport.requests.Request()
+    credentials = flow.credentials
+    token_request = google.auth.transport.requests.Request()
 
-  id_info = id_token.verify_oauth2_token(
-    id_token=credentials._id_token,
-    request=token_request,
-    audience=GOOGLE_CLIENT_ID,
-    clock_skew_in_seconds = 300
-  ) 
+    id_info = id_token.verify_oauth2_token(
+        id_token=credentials._id_token,
+        request=token_request,
+        audience=GOOGLE_CLIENT_ID,
+        clock_skew_in_seconds = 300
+        ) 
 
-  existing_user = User.query.filter_by(google_id=id_info.get("sub")).first()
+    existing_user = User.query.filter_by(google_id=id_info.get("sub")).first()
 
-  if not existing_user:
-    # Create a new user in the database using Google-authenticated data
-    new_user = User(
-        username=id_info.get("sub"),  # You can use the Google sub as the username
-        full_name=id_info.get("name"),
-        email_address=id_info.get("email"),
-        google_id=id_info.get("sub"),  # Store Google ID for future reference
-        profile_picture_url=id_info.get("picture"),
-        Created_at = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')),
-        last_login = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')),
-        is_verified = True
-        )
-    db.session.add(new_user)
-    db.session.commit()
-    new_user.update_last_login()
+    if not existing_user:
+        # Create a new user in the database using Google-authenticated data
+        new_user = User(
+            username=id_info.get("sub"),  # You can use the Google sub as the username
+            full_name=id_info.get("name"),
+            email_address=id_info.get("email"),
+            google_id=id_info.get("sub"),  # Store Google ID for future reference
+            profile_picture_url=id_info.get("picture"),
+            Created_at = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')),
+            last_login = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')),
+            is_verified = True
+            )
+        db.session.add(new_user)
+        db.session.commit()
+        new_user.update_last_login()
 
-  else: 
-    existing_user.update_last_login()
+    else: 
+        existing_user.update_last_login()
 
 
-  session["google_id"] = id_info.get("sub")
-  session["name"] = id_info.get("name")
-  session["Email_id"] = id_info.get("email")
-  session["Picture_url"] = id_info.get("picture")
-  session["First_Name"] = id_info.get("given_name")
-  session["Last_Name"] = id_info.get("family_name")
+    session["google_id"] = id_info.get("sub")
+    session["name"] = id_info.get("name")
+    session["Email_id"] = id_info.get("email")
+    session["Picture_url"] = id_info.get("picture")
+    session["First_Name"] = id_info.get("given_name")
+    session["Last_Name"] = id_info.get("family_name")
 
-  print(session["Email_id"])
-  print(session["Picture_url"])
-  print(session["First_Name"])
+    print(session["Email_id"])
+    print(session["Picture_url"])
+    print(session["First_Name"])
 
-  return redirect("/google-wait")
+    return redirect("/google-wait")
