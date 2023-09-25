@@ -71,9 +71,9 @@ def register_page():
         return redirect(url_for('Event_page'))
         '''
 
-    if form.errors != {}:       #If there are no errors from the validations.
+    '''if form.errors != {}:       #If there are no errors from the validations.
         for err_msg in form.errors.values():
-            flash(f'There was an error with creating a user: {err_msg}', category='danger')
+            flash(f'There was an error with creating a user: {err_msg}', category='danger')'''
 
     return render_template('register.html', form=form)
 
