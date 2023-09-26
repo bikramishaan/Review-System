@@ -28,7 +28,7 @@ def register_page():
 
     if form.validate_on_submit():
         recaptcha_response = request.form.get('g-recaptcha-response')
-        secret_key = '6LdCjhAoAAAAAPl5hO22mP8--Erm1FQUladGgvS8'
+        secret_key = '6LdCjhAoAAAAAPl5hO22mP8--Erm1FQUladGgvS8' 
 
         data = {
         'secret': secret_key,
@@ -192,7 +192,6 @@ def google_login():
 def callback():
 
     flow.fetch_token(authorization_response=request.url)
-    print(flow)
 
     if not session["state"] == request.args["state"]:
         abort(500)
@@ -207,7 +206,7 @@ def callback():
         clock_skew_in_seconds = 300
         ) 
 
-    existing_user = User.query.filter_by(google_id=id_info.get("sub")).first()
+    existing_user = User.query.filter_by(email_address=id_info.get("email")).first()
 
     if not existing_user:
         # Create a new user in the database using Google-authenticated data
