@@ -15,19 +15,19 @@ import requests
 from werkzeug.utils import secure_filename
 import os
 
-@app.route('/')
+@app.route('/')             #The Home Route is executed just right after running of the application.
 @app.route('/home')
 def home_page():
     return render_template('home.html')
 
 ''' Manual User Regsitration Route'''
-@app.route("/register", methods=['GET', 'POST'])
+@app.route("/register", methods=['GET', 'POST'])    #Registration route
 def register_page():
-    form = RegisterForm()
-    token = None
+    form = RegisterForm()                           #Creating an object for the regsitration form  
+    token = None                                    
 
-    if form.validate_on_submit():
-        recaptcha_response = request.form.get('g-recaptcha-response')
+    if form.validate_on_submit():                   #To check if the form is successfully submitted by the user
+        recaptcha_response = request.form.get('g-recaptcha-response')               
         secret_key = '6LdCjhAoAAAAAPl5hO22mP8--Erm1FQUladGgvS8' 
 
         data = {
@@ -102,7 +102,7 @@ def login_page():
         else:
             flash('Username and password are not match! or Email Verification is not done. Please try again', category='danger')
 
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form) 
 
 
     '''The login required function to check if the google user is in session or not.'''
@@ -241,6 +241,14 @@ def callback():
 
     return redirect("/google-wait")
 
+def generate_invite_links():            #To generate unique invite links for reviewers to sensd by the admin 
+    token = secrets.token_hex(20)
+
+    base_url = 'http://127.0.0.1:5000/invite?token='
+    links = base_url + token
+
+    return links
+
 @app.route("/admin", methods=['GET', 'POST'])
 def admin_login():
     form = AdminForm()
@@ -257,9 +265,17 @@ def admin_login():
 @app.route('/admin-page/<admin_username>', methods=['GET', 'POST'])
 def admin_page(admin_username):
     form = InviteLinks()
+    Invite_links = []
+    
     if form.validate_on_submit():
         number = form.number.data
-        
-        flash(f'Successfullly Selected the number is: {number}', category='success')
 
-    return render_template('admin_page.html', admin_username=admin_username, form=form)
+        for i in range(number):
+            links = generate_invite_links()
+            Invite_links.append(links)
+            
+        print(Invite_links)
+        flash(f'Here are your {number} number of links', category='success')
+
+    return render_template('admin_page.html', admin_username=admin_username, form=form, Invite_links=Invite_links)
+
