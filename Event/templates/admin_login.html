@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}
+    Admin Login Page
+{% endblock %}
+
+{%block content %}
+<style>
+    .form-signin {
+    margin: 0 auto;
+    max-width: 600px; /* Adjust the maximum width as needed */
+    text-align: left; /* Adjust text alignment within the form */
+    }
+</style>
+<body class="text-center">
+    <div class="container">
+        <form method="POST" class="form-signin" style="color:white">
+            {{ form.hidden_tag() }}
+            <br><br>
+            <img class="mb-4 rounded-circle" src="../static/Images/InReview logo with bg.png" width="200" height="200" alt="">
+            <h1 class="h3 nb-3 font-weight-normal">
+                Admin Login
+            </h1>
+            <br>
+            {{ form.username.label() }}
+            {{ form.username(class="form-control", placeholder="") }}
+
+            {{ form.password.label() }}
+            {{ form.password(class="form-control", placeholder="") }}
+
+            <br>
+
+            {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+
+            <br><br>
+        </form>
+    </div>
+</body>
+{%endblock %}

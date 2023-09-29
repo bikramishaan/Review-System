@@ -1,7 +1,7 @@
 from Event import app
 from flask import render_template, redirect, url_for, flash, request, session, abort
 from Event.models import User
-from Event.forms import RegisterForm, LoginForm, UploadFileForm
+from Event.forms import RegisterForm, LoginForm, UploadFileForm, AdminForm
 from Event import db, flow, GOOGLE_CLIENT_ID, mail, ALLOWED_EXTENSIONS
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_dance.contrib.google import google
@@ -98,7 +98,7 @@ def login_page():
             login_user(attempted_user)
             attempted_user.update_last_login()
             flash(f'Success!! You are logged in as: {attempted_user.username} ', category='success')
-            return redirect(url_for('Event_page'))
+            return redirect(url_for('event_page'))
         else:
             flash('Username and password are not match! or Email Verification is not done. Please try again', category='danger')
 
@@ -117,8 +117,8 @@ def login_is_required(function):
     return wrapper
 
 @app.route('/event-page')
-def Event_page():
-    return render_template('EventPage.html')
+def event_page():
+    return render_template('event_page.html')
 
 @app.route('/hackathon', methods=['GET', 'POST'])
 def hackathon_page():
@@ -145,12 +145,12 @@ def allowed_file(filename):
 
 @app.route('/google-wait')
 @login_is_required
-def Event_page_google():
-    return redirect(url_for('Event_page'))
+def event_page_google():
+    return redirect(url_for('event_page'))
 
 @app.route('/redirect')
 def redirect_page():
-    return render_template('Redirect.html')
+    return render_template('redirect.html')
 
 @app.route('/verify')
 def verify_email():
@@ -240,3 +240,20 @@ def callback():
     print(session["First_Name"])
 
     return redirect("/google-wait")
+
+@app.route("/admin", methods=['GET', 'POST'])
+def admin_login():
+    form = AdminForm()
+    if form.validate_on_submit():
+        if form.username.data == 'user0615243' and form.password.data == '855e121a6fed048a30d89cb24c768d1e4c1f40bcc8a64dca61895ab0deb17144':
+            admin_username = form.username.data
+            flash(f'Success!! You are successfully logged in.', category='success')
+            return redirect(url_for('admin_page', admin_username=admin_username))
+        else:
+            flash('Username and password are not matched! Please try again', category='danger')
+
+    return render_template('admin_login.html', form=form)
+
+@app.route('/admin-page/<admin_username>')
+def admin_page(admin_username):
+    return render_template('admin_page.html', admin_username=admin_username)
