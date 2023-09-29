@@ -9,6 +9,11 @@
     display: block;
     margin: 0;
     }     
+    .form-signin {
+    margin: 0 auto;
+    max-width: 600px; /* Adjust the maximum width as needed */
+    text-align: left; /* Adjust text alignment within the form */
+    }
 </style>
 <body>
     <div class="position-relative overflow-hidden p-5 p-md-7 m-md-3 text-center bg-dark">
@@ -16,6 +21,24 @@
             <h1 class="display-4 font-weight-normal">Congratulations!</h1>
             <p class="lead font-weight-normal">You are now logged in as admin.</p> 
         </div>
+
+        <form method="POST" class="form-signin" style="color:white">
+            {{ form.hidden_tag() }}
+            <br><br>
+            <h1 class="h3 nb-3 font-weight-normal">
+                Enter below the number of links to generate
+            </h1>
+            <br>
+
+            {{ form.number.label() }}
+            {{ form.number(class="form-control", placeholder="") }}
+
+            <br>
+
+            {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+
+            <br><br>
+        </form>
 
         <div class="product-device box-shadow d-none d-md-block"></div>
         <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>

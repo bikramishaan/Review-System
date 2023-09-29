@@ -1,7 +1,7 @@
 from Event import app
 from flask import render_template, redirect, url_for, flash, request, session, abort
 from Event.models import User
-from Event.forms import RegisterForm, LoginForm, UploadFileForm, AdminForm
+from Event.forms import RegisterForm, LoginForm, UploadFileForm, AdminForm, InviteLinks
 from Event import db, flow, GOOGLE_CLIENT_ID, mail, ALLOWED_EXTENSIONS
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_dance.contrib.google import google
@@ -254,6 +254,12 @@ def admin_login():
 
     return render_template('admin_login.html', form=form)
 
-@app.route('/admin-page/<admin_username>')
+@app.route('/admin-page/<admin_username>', methods=['GET', 'POST'])
 def admin_page(admin_username):
-    return render_template('admin_page.html', admin_username=admin_username)
+    form = InviteLinks()
+    if form.validate_on_submit():
+        number = form.number.data
+        
+        flash(f'Successfullly Selected the number is: {number}', category='success')
+
+    return render_template('admin_page.html', admin_username=admin_username, form=form)

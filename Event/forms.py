@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField
-from wtforms.validators import Length,EqualTo, Email, DataRequired, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField
+from wtforms.validators import Length,EqualTo, Email, DataRequired, ValidationError, NumberRange
 from Event.models import User
 from flask_wtf.recaptcha import RecaptchaField
 
@@ -36,3 +36,13 @@ class AdminForm(FlaskForm):
 class UploadFileForm(FlaskForm):
     file = FileField("File", validators=[DataRequired()])
     submit = SubmitField("Upload File")
+
+class InviteLinks(FlaskForm):
+    number = IntegerField(
+        label="Enter here:", 
+        validators=[
+            DataRequired(message="This field is required."),
+            NumberRange(min=1, max=999, message='Value must be between 1 and 999.')
+        ]
+    )
+    submit = SubmitField(label="Generate Links")
