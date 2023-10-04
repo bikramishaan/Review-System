@@ -15,18 +15,19 @@ import requests
 from werkzeug.utils import secure_filename
 import os
 
-@app.route('/')             #The Home Route is executed just right after running of the application.
+#The Home Route is executed just right after running of the application.
+@app.route('/')             
 @app.route('/home')
 def home_page():
     return render_template('home.html')
 
-''' Manual User Regsitration Route'''
-@app.route("/register", methods=['GET', 'POST'])    #Registration route
+#Manual Registration route
+@app.route("/register", methods=['GET', 'POST'])            
 def register_page():
-    form = RegisterForm()                           #Creating an object for the regsitration form  
+    form = RegisterForm()                                   #Creating an object for the regsitration form  
     token = None                                    
 
-    if form.validate_on_submit():                   #To check if the form is successfully submitted by the user
+    if form.validate_on_submit():                           #To check if the form is successfully submitted by the user.
         recaptcha_response = request.form.get('g-recaptcha-response')               
         secret_key = '6LdCjhAoAAAAAPl5hO22mP8--Erm1FQUladGgvS8' 
 
@@ -35,24 +36,25 @@ def register_page():
         'response': recaptcha_response,
         }
 
-        response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data, timeout=10)
+        response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data, timeout=10)      #To check the recpatcha response submitted by user to verify the human.
         result = response.json()
         print(result)
 
-        if not result['success']:
+        if not result['success']:                                           #If the response is successful, a new user is created in the db.
             user_to_create = User(username=form.username.data,
                 full_name = form.full_name.data,
                 email_address=form.email_address.data,
                 password=form.password1.data
                 )
         
-            token = generate_verification_token(user_to_create.email_address)
+            token = generate_verification_token(user_to_create.email_address)           #To generate unique verification token for each user to send them on mail.
             print(token)
             user_to_create.verification_token=token
             db.session.add(user_to_create)
-            db.session.commit()
+            db.session.commit()                                                         #Initial commit of the user before final registration.
             verification_link = url_for('verify_email', token=token, _external=True)
 
+            # Mail to send to the registered users fto verify thier account.
             msg = Message('Verify Your Email', sender='bharat.aggarwal@iic.ac.in', recipients=[user_to_create.email_address])
             msg.body = f'Click on the following link to verify your email: {verification_link}'
             mail.send(msg)
@@ -78,7 +80,7 @@ def register_page():
     return render_template('register.html', form=form)
 
 def generate_verification_token(email):
-    token = secrets.token_hex(16) #Generate a random token
+    token = secrets.token_hex(16)                       #To Generate a random token
 
     '''user = User.query.filter_by(email_address=email).first()
     user.verification_token = token'''
@@ -86,15 +88,15 @@ def generate_verification_token(email):
     return token
 
 
-''' Manual User Login Route'''
+#Manula login route
 @app.route("/login", methods=['GET', 'POST'])
 def login_page():
     form = LoginForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit():                       #To validate the form submission by the user.
         attempted_user = User.query.filter_by(username=form.username.data).first()
         print(attempted_user.username)
         print(attempted_user.hash_password)
-        if attempted_user and attempted_user.is_verified and attempted_user.check_password_correction(attempted_password=form.password.data):
+        if attempted_user and attempted_user.is_verified and attempted_user.check_password_correction(attempted_password=form.password.data):  #To verify all the credentials of the user like username existence, password and verification done or not.
             login_user(attempted_user)
             attempted_user.update_last_login()
             flash(f'Success!! You are logged in as: {attempted_user.username} ', category='success')
@@ -107,18 +109,18 @@ def login_page():
 
     '''The login required function to check if the google user is in session or not.'''
 
-def login_is_required(function):
+def login_is_required(function):            #function to check if the current google id is in session or not.
     def wrapper(*args, **kwargs):
         if "google_id" not in session: 
-            return abort(401) # Authorizaion Required
+            return abort(401)               # Authorizaion Required
         else:
-            return function()
+            return function()               #return to the calling function (successful).
 
     return wrapper
 
 @app.route('/event-page')
 def event_page():
-    return render_template('event_page.html')
+    return render_template('event_page.html', google_id=session["google_id"], name=session["name"], Email_id=session["Email_id"])
 
 @app.route('/hackathon', methods=['GET', 'POST'])
 def hackathon_page():
