@@ -114,6 +114,7 @@ def login_is_required(function):            #function to check if the current go
         if "google_id" not in session: 
             return abort(401)               # Authorizaion Required
         else:
+            print(session['google_id'])
             return function()               #return to the calling function (successful).
 
     return wrapper

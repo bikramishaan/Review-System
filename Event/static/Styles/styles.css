@@ -1,0 +1,15 @@
+.card-image {
+padding: 20px;
+display: block;
+margin: 0;
+} 
+.form-register {
+margin: 0 auto;
+max-width: 600px; /* Adjust the maximum width as needed */
+text-align: left; /* Adjust text alignment within the form */
+}
+.form-signin {
+margin: 0 auto; 
+max-width: 600px; /* Adjust the maximum width as needed */
+text-align: left; /* Adjust text alignment within the form */
+}
