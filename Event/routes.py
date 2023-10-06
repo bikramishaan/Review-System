@@ -111,6 +111,7 @@ def login_page():
 
 def login_is_required(function):            #function to check if the current google id is in session or not.
     def wrapper(*args, **kwargs):
+        print(session)
         if "google_id" not in session: 
             return abort(401)               # Authorizaion Required
         else:
@@ -120,8 +121,10 @@ def login_is_required(function):            #function to check if the current go
     return wrapper
 
 @app.route('/event-page')
-def event_page():
+def google_event_page():
     return render_template('event_page.html', google_id=session["google_id"], name=session["name"], Email_id=session["Email_id"])
+def event_page():
+    return render_template('event_page.html')
 
 @app.route('/hackathon', methods=['GET', 'POST'])
 def hackathon_page():
@@ -149,7 +152,7 @@ def allowed_file(filename):
 @app.route('/google-wait')
 @login_is_required
 def event_page_google():
-    return redirect(url_for('event_page'))
+    return redirect(url_for('google_event_page'))
 
 @app.route('/redirect')
 def redirect_page():
@@ -226,7 +229,6 @@ def callback():
         db.session.add(new_user)
         db.session.commit()
         new_user.update_last_login()
-
     else: 
         existing_user.update_last_login()
 

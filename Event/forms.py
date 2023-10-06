@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField, SelectField
 from wtforms.validators import Length,EqualTo, Email, DataRequired, ValidationError, NumberRange
 from Event.models import User
 from flask_wtf.recaptcha import RecaptchaField
@@ -26,6 +26,7 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField(label="User Name:", validators=[DataRequired()])
     password = PasswordField(label="Password:", validators=[DataRequired()])
+    role = SelectField(label="Role:", choices=[('','Select Role'), ('particpant', 'Participant'), ('organizer', 'Organizer')], validators=[DataRequired()])
     submit = SubmitField(label='Sign In')
 
 class AdminForm(FlaskForm):
