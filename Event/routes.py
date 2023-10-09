@@ -121,10 +121,10 @@ def login_is_required(function):            #function to check if the current go
     return wrapper
 
 @app.route('/event-page')
-def google_event_page():
-    return render_template('event_page.html', google_id=session["google_id"], name=session["name"], Email_id=session["Email_id"])
 def event_page():
     return render_template('event_page.html')
+def google_event_page():
+    return render_template('event_page.html', google_id=session["google_id"], name=session["name"], Email_id=session["Email_id"])
 
 @app.route('/hackathon', methods=['GET', 'POST'])
 def hackathon_page():
