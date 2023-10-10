@@ -1,3 +1,7 @@
+body{
+    margin:2px;
+    padding: 5px;
+}
 .card-image {
 padding: 20px;
 display: block;

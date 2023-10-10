@@ -107,21 +107,18 @@ def login_page():
             print(attempted_user.role)
             login_user(attempted_user)
             attempted_user.update_last_login()
-            flash(f'Success!! You are logged in as: {attempted_user.username} ', category='success')
 
             if attempted_user.role == 'participant':
-                return redirect(url_for('event_page'))    
+                flash(f'Success!! You are logged in as: {attempted_user.username} ', category='success')
+                return redirect(url_for('event_page', role=attempted_user.role))    
             else:
-                return redirect(url_for('organizer_page'))             
+                flash(f'Success!! You are logged in as: {attempted_user.username} ', category='success')
+                return redirect(url_for('organizer_page', role=attempted_user.role))                 
         else:
             flash('Username and password are not match! or Email Verification is not done. Please try again', category='danger')
 
     return render_template('login.html', form=form) 
 
-
-@app.route("/organizer")
-def organizer_page():
-    return render_template('organizer.html')
 
 '''The login required function to check if the google user is in session or not.'''
 
@@ -136,10 +133,10 @@ def login_is_required(function):            #function to check if the current go
 
     return wrapper
 
-@app.route('/event-page')                   #route for redirecting the authenticated users to the main event page.
-def event_page():
-    return render_template('event_page.html')
-def google_event_page():                    
+@app.route('/event-page/<role>')                   #route for redirecting the authenticated users to the main event page.
+def event_page(role):
+    return render_template('event_page.html', role=role)
+def google_event_page():
     return render_template('event_page.html', google_id=session["google_id"], name=session["name"], Email_id=session["Email_id"])
 
 @app.route('/hackathon', methods=['GET', 'POST'])           #Separate Event details route
@@ -164,6 +161,11 @@ def hackathon_page():
 
 def allowed_file(filename):                                     #function used to define all the allowed extensions.
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route("/organizer/<role>")                                        #route to redirect the event organizer.
+def organizer_page(role):
+    return render_template('organizer.html', role=role)
 
 @app.route('/google-wait')                                      #Function to check if the current google session is correct or not.
 @login_is_required
