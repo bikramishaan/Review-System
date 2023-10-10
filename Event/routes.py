@@ -109,10 +109,10 @@ def login_page():
             attempted_user.update_last_login()
 
             if attempted_user.role == 'participant':
-                flash(f'Success!! You are logged in as: {attempted_user.username} ', category='success')
-                return redirect(url_for('event_page', role=attempted_user.role))    
+                flash(f'Success!! Username - {attempted_user.username} ', category='success')
+                return redirect(url_for('event_page', role=attempted_user.role))        
             else:
-                flash(f'Success!! You are logged in as: {attempted_user.username} ', category='success')
+                flash(f'Success!! Username - {attempted_user.username} ', category='success')
                 return redirect(url_for('organizer_page', role=attempted_user.role))                 
         else:
             flash('Username and password are not match! or Email Verification is not done. Please try again', category='danger')

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField, SelectField, DateTimeField
 from wtforms.validators import Length,EqualTo, Email, DataRequired, ValidationError, NumberRange
 from Event.models import User
 from flask_wtf.recaptcha import RecaptchaField
@@ -47,3 +47,21 @@ class InviteLinks(FlaskForm):
         ]
     )
     submit = SubmitField(label="Generate Links")
+
+class EventForm(FlaskForm):
+    category = SelectField(label="Category:", choices=[('conference', 'Conference'), ('journal', 'Journal')], validators=[DataRequired()])
+    title = StringField(label="Title:", validators=[DataRequired()])
+    acronym = StringField(label="Acronym:", validators=[DataRequired()])
+    web_page_url = StringField(label="Web Page:", validators=[DataRequired()])
+    venue = StringField(label="Venue:")
+    city = StringField(label="City:", validators=[DataRequired()])
+    country = SelectField(label="Country:", choices=[('India', 'India'), ('china', 'China')], validators=[DataRequired()])
+    first_day = DateTimeFieldField(label="First day:", format='%Y-%M-%D %H:%M:%S' validators=[DataRequired()])
+    last_day = DateTimeField(label="Last day:", format='%Y-%M-%D %H:%M:%S', validators=[DataRequired()])
+    primary_area = SelectField(label="Primary area:", choices=[('biological sciences', 'Biological Sciences'), ('technology', 'Technology')], validators=[DataRequired()])
+    secondary_area = SelectField(label="Secondary area:", choices=[('biological sciences', 'Biological Sciences'), ('technology', 'Technology')], validators=[DataRequired()])
+    area_notes = StringField(label="Area notes:", validators=[DataRequired()])
+    organizer = StringField(label="Organizer:", validators=[DataRequired()])
+    organizer_web_page = StringField(label="Organizer Web page:", validators=[DataRequired()])
+    phone_no = StringField(label="Contact Phone number:", validators=[DataRequired()])
+    other_info = StringField(label="Any other infromation:", validators=[DataRequired()])
