@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}
+    Organizer Logged In
+{% endblock %}
+{% block content %}
+<body>
+    <div class="position-relative overflow-hidden p-5 p-md-7 m-md-3 text-center bg-dark">
+        <div class="col-md-5 p-lg-1 mx-auto my-1">
+            <h1 class="display-4 font-weight-normal">Congratulations!</h1>
+            <p class="lead font-weight-normal">You are Successfully logged in.</p> 
+        </div>
+
+        <br>
+        <h5 class="text-left text-decoration-underline">Select an Event to register - </h5>
+        <br><br>
+
+        <div class="card text-left" style="color:black">
+            <div class="card-header">                   <!--Header of the card -->
+                Featured
+            </div>
+            <div class="row">                           <!--A unique row consists of both the columns-->
+                <div class="col-md-2">                  <!--Column for the image-->
+                    <img src="../static/Images/Dropbox AI hackathon.png" alt="Hackathon Image" class="card-image img-fluid">
+                </div>
+                <div class="col-md-10">                  <!--Column for the card content-->
+                    <div class="card-body">
+                        <h4 class="card-title">Dropbox Sign AI-Powered Agreements Hackathon</h4>
+                        <p class="card-text">Deadline: Oct 10, 2023 @ 3:00pm EDT.</p>
+                        <a href="{{ url_for('hackathon_page') }}" class="btn btn-primary">Regsiter Here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-device box-shadow d-none d-md-block"></div>
+        <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
+    </div>
+</body>
+{% endblock %}

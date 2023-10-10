@@ -88,7 +88,7 @@ def generate_verification_token(email):
     return token
 
 
-#Manula login route
+#Manual login route
 @app.route("/login", methods=['GET', 'POST'])
 def login_page():
     form = LoginForm()
@@ -96,18 +96,34 @@ def login_page():
         attempted_user = User.query.filter_by(username=form.username.data).first()
         print(attempted_user.username)
         print(attempted_user.hash_password)
-        if attempted_user and attempted_user.is_verified and attempted_user.check_password_correction(attempted_password=form.password.data):  #To verify all the credentials of the user like username existence, password and verification done or not.
+        attempted_user.role = form.role.data
+        db.session.add(attempted_user)
+        db.session.commit()  
+        print(f"Form Role: {form.role.data}")
+        print(f"User Role: {attempted_user.role}")
+
+        if attempted_user and attempted_user.is_verified and attempted_user.check_password_correction(attempted_password=form.password.data):
+              #To verify all the credentials of the user like username existence, password and verification done or not.
+            print(attempted_user.role)
             login_user(attempted_user)
             attempted_user.update_last_login()
             flash(f'Success!! You are logged in as: {attempted_user.username} ', category='success')
-            return redirect(url_for('event_page'))
+
+            if attempted_user.role == 'participant':
+                return redirect(url_for('event_page'))    
+            else:
+                return redirect(url_for('organizer_page'))             
         else:
             flash('Username and password are not match! or Email Verification is not done. Please try again', category='danger')
 
     return render_template('login.html', form=form) 
 
 
-    '''The login required function to check if the google user is in session or not.'''
+@app.route("/organizer")
+def organizer_page():
+    return render_template('organizer.html')
+
+'''The login required function to check if the google user is in session or not.'''
 
 def login_is_required(function):            #function to check if the current google id is in session or not.
     def wrapper(*args, **kwargs):
@@ -120,24 +136,24 @@ def login_is_required(function):            #function to check if the current go
 
     return wrapper
 
-@app.route('/event-page')
+@app.route('/event-page')                   #route for redirecting the authenticated users to the main event page.
 def event_page():
     return render_template('event_page.html')
-def google_event_page():
+def google_event_page():                    
     return render_template('event_page.html', google_id=session["google_id"], name=session["name"], Email_id=session["Email_id"])
 
-@app.route('/hackathon', methods=['GET', 'POST'])
+@app.route('/hackathon', methods=['GET', 'POST'])           #Separate Event details route
 def hackathon_page():
-    upload_form = UploadFileForm()
-    if upload_form.validate_on_submit():
+    upload_form = UploadFileForm()                          
+    if upload_form.validate_on_submit():                    #Validating the successful upload done by user.
         file = upload_form.file.data
 
-        if file.filename == '':
+        if file.filename == '':                             
             flash('No file selected for uploading')
             return redirect(request.url)
 
-        if file and allowed_file(file.filename):
-            file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
+        if file and allowed_file(file.filename):            #checking if file extension is allowed
+            file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))     #The uploaded file get saved in the specified folder.
             flash('File has been Succesfully uploaded.','success')
         else:
             flash('File did not uploaded!!! Allowed file types are txt, pdf, png, jpg, jpeg, gif', 'danger')
@@ -146,19 +162,19 @@ def hackathon_page():
 
 
 
-def allowed_file(filename):
+def allowed_file(filename):                                     #function used to define all the allowed extensions.
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/google-wait')
+@app.route('/google-wait')                                      #Function to check if the current google session is correct or not.
 @login_is_required
 def event_page_google():
     return redirect(url_for('google_event_page'))
 
-@app.route('/redirect')
+@app.route('/redirect')                                         #Redirect route to wait for user to verify their email.
 def redirect_page():
     return render_template('redirect.html')
 
-@app.route('/verify')
+@app.route('/verify')                                           #Route to verify the unique token send to a user to their mail to redirect them to login page.
 def verify_email():
     token = request.args.get('token')
     print(token)
@@ -176,7 +192,7 @@ def verify_email():
         return redirect(url_for('register_page'))
 
 
-@app.route("/logout")
+@app.route("/logout")                                           #logout Route to end the cuurent session.
 def logout_page():
     logout_user()
     session.clear()
@@ -186,35 +202,35 @@ def logout_page():
 ''' Google authentication code was written from here.
     '''
 
-@app.route('/google-login')
+@app.route('/google-login')                                     #The google login route to initialize the Google OAuth 2.O login process. 
 def google_login():
-    authorization_url, state = flow.authorization_url()
+    authorization_url, state = flow.authorization_url()         #This will generate the URL for Google OAuth 2.O authentication.
     print(authorization_url)
-    session["state"] = state
+    session["state"] = state                                    #The 'state' parameter is stored in the user's session to be checked later for secuity validation.
     print(state)
-    return redirect(authorization_url)
+    return redirect(authorization_url)                          #The user's browser will redirect the user to the mentioned authorization_url.
 
-@app.route("/callback")
+@app.route("/callback")                                         #This route will call after user has authenticated an account from his side.
 def callback():
 
-    flow.fetch_token(authorization_response=request.url)
+    flow.fetch_token(authorization_response=request.url)        #This will fetch the access token and other info from google using URL returned by authentication process.
 
-    if not session["state"] == request.args["state"]:
+    if not session["state"] == request.args["state"]:           #This will check if the state parameter stored in the user's session matches with the state paramters recieved as query parameters in the callback URl. 
         abort(500)
 
     credentials = flow.credentials
     token_request = google.auth.transport.requests.Request()
 
-    id_info = id_token.verify_oauth2_token(
+    id_info = id_token.verify_oauth2_token(                     #This code verifies the ID token received from Google using the credentials obtained earlier. It verifies the token's authenticity and decodes it to obtain user information.
         id_token=credentials._id_token,
         request=token_request,
         audience=GOOGLE_CLIENT_ID,
         clock_skew_in_seconds = 300
         ) 
 
-    existing_user = User.query.filter_by(email_address=id_info.get("email")).first()
+    existing_user = User.query.filter_by(email_address=id_info.get("email")).first()            #This will check if the user's provided email address during google login already exists in the app's database.
 
-    if not existing_user:
+    if not existing_user:                                                                   #If user doesn't exists, a new user is created using Google-authenticated data.
         # Create a new user in the database using Google-authenticated data
         new_user = User(
             username=id_info.get("sub"),  # You can use the Google sub as the username
@@ -232,7 +248,7 @@ def callback():
     else: 
         existing_user.update_last_login()
 
-
+    #The user's details is stored in the session for later use.
     session["google_id"] = id_info.get("sub")
     session["name"] = id_info.get("name")
     session["Email_id"] = id_info.get("email")
@@ -246,7 +262,7 @@ def callback():
 
     return redirect("/google-wait")
 
-def generate_invite_links():            #To generate unique invite links for reviewers to sensd by the admin 
+def generate_invite_links():                    #To generate unique invite links for reviewers to send by the admin. 
     token = secrets.token_hex(20)
 
     base_url = 'http://127.0.0.1:5000/invite?token='
@@ -256,9 +272,9 @@ def generate_invite_links():            #To generate unique invite links for rev
 
 @app.route("/admin", methods=['GET', 'POST'])
 def admin_login():
-    form = AdminForm()
+    form = AdminForm()                              #Initializes the form for Admin.
     if form.validate_on_submit():
-        if form.username.data == 'user0615243' and form.password.data == '855e121a6fed048a30d89cb24c768d1e4c1f40bcc8a64dca61895ab0deb17144':
+        if form.username.data == 'user0615243' and form.password.data == '855e121a6fed048a30d89cb24c768d1e4c1f40bcc8a64dca61895ab0deb17144':            #Validating the admin details.
             admin_username = form.username.data
             flash(f'Success!! You are successfully logged in.', category='success')
             return redirect(url_for('admin_page', admin_username=admin_username))
@@ -269,13 +285,13 @@ def admin_login():
 
 @app.route('/admin-page/<admin_username>', methods=['GET', 'POST'])
 def admin_page(admin_username):
-    form = InviteLinks()
-    Invite_links = []
+    form = InviteLinks()                                    #Initializes the InviteLinks form. 
+    Invite_links = []                                       #Initilizes a blank list to store all the invite links.
     
     if form.validate_on_submit():
         number = form.number.data
 
-        for i in range(number):
+        for i in range(number):                             #Looping upto the specified number mentioned to generate each unique link.
             links = generate_invite_links()
             Invite_links.append(links)
             
