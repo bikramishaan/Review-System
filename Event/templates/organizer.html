@@ -16,6 +16,11 @@
         <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
     </div>
 
+    <div class="event-details">
+        <h4>Create a new event:</h4>
+        <a class="btn btn-sm btn-primary mt-3" href="{{ url_for('event_details_form') }}">Create New</a>
+    </div>
+
     <script>
         var role = "{{ role }}";
         console.log(role);

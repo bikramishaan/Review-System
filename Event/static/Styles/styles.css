@@ -17,3 +17,7 @@ margin: 0 auto;
 max-width: 600px; /* Adjust the maximum width as needed */
 text-align: left; /* Adjust text alignment within the form */
 }
+.event-details{
+    padding: 8px;
+    margin: 4px;
+}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}
+    New Event Form
+{% endblock %}
+{% block content %}
+<body>
+
+    <div class="container">
+        <h4>InReview New Event Request</h4>
+        <p>Please fill out the form and submit a send </p>
+        <form method="POST" style="color:white">
+            {{ form.hidden_tag() }}
+
+            {{ form.category.label() }}
+            {{ form.category(class="form-control", placeholder="") }}
+
+            <br>
+
+            {{ form.title.label() }}
+            {{ form.title(class="form-control", placeholder="") }}
+
+            {{ form.acronym.label() }}
+            {{ form.acronym(class="form-control", placeholder="") }}
+
+            <br>
+
+            {{ form.web_page_url.label() }}
+            {{ form.web_page_url(class="form-control", placeholder="") }}
+
+            {{ form.venue.label() }}
+            {{ form.venue(class="form-control", placeholder="") }}
+
+            {{ form.city.label() }}
+            {{ form.city(class="form-control", placeholder="") }}
+
+            {{ form.country.label() }}
+            {{ form.country(class="form-control", placeholder="") }}
+
+            <br>
+
+            {{ form.first_day.label() }}
+            {{ form.first_day(class="form-control", placeholder="") }}
+
+            {{ form.last_day.label() }}
+            {{ form.last_day(class="form-control", placeholder="") }}
+
+            <br>
+
+            {{ form.primary_area.label() }}
+            {{ form.primary_area(class="form-control", placeholder="") }}
+
+            {{ form.secondary_area.label() }}
+            {{ form.secondary_area(class="form-control", placeholder="") }}
+
+            {{ form.area_notes.label() }}
+            {{ form.area_notes(class="form-control", placeholder="") }}
+
+            <br>
+
+            {{ form.organizer.label() }}
+            {{ form.organizer(class="form-control", placeholder="") }}
+
+            {{ form.organizer_web_page.label() }}
+            {{ form.organizer_web_page(class="form-control", placeholder="") }}
+
+            {{ form.phone_no.label() }}
+            {{ form.phone_no(class="form-control", placeholder="") }}
+
+            <br>
+
+            {{ form.other_info.label() }}
+            {{ form.other_info(class="form-control", placeholder="") }}
+
+            <br><br>
+
+            {{ form.submit(class="btn btn-sm btn-block btn-primary") }}
+        
+        </form>
+
+    </div>
+
+    <script>
+        var role = "{{ role }}";
+        console.log(role);
+    </script>
+    
+</body>
+{% endblock %}

@@ -56,7 +56,7 @@ class EventForm(FlaskForm):
     venue = StringField(label="Venue:")
     city = StringField(label="City:", validators=[DataRequired()])
     country = SelectField(label="Country:", choices=[('India', 'India'), ('china', 'China')], validators=[DataRequired()])
-    first_day = DateTimeFieldField(label="First day:", format='%Y-%M-%D %H:%M:%S' validators=[DataRequired()])
+    first_day = DateTimeField(label="First day:", format='%Y-%M-%D %H:%M:%S', validators=[DataRequired()])
     last_day = DateTimeField(label="Last day:", format='%Y-%M-%D %H:%M:%S', validators=[DataRequired()])
     primary_area = SelectField(label="Primary area:", choices=[('biological sciences', 'Biological Sciences'), ('technology', 'Technology')], validators=[DataRequired()])
     secondary_area = SelectField(label="Secondary area:", choices=[('biological sciences', 'Biological Sciences'), ('technology', 'Technology')], validators=[DataRequired()])
@@ -65,3 +65,4 @@ class EventForm(FlaskForm):
     organizer_web_page = StringField(label="Organizer Web page:", validators=[DataRequired()])
     phone_no = StringField(label="Contact Phone number:", validators=[DataRequired()])
     other_info = StringField(label="Any other infromation:", validators=[DataRequired()])
+    submit = SubmitField(label='Send Request')

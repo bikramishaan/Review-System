@@ -1,7 +1,7 @@
 from Event import app
 from flask import render_template, redirect, url_for, flash, request, session, abort
 from Event.models import User
-from Event.forms import RegisterForm, LoginForm, UploadFileForm, AdminForm, InviteLinks
+from Event.forms import RegisterForm, LoginForm, UploadFileForm, AdminForm, InviteLinks, EventForm
 from Event import db, flow, GOOGLE_CLIENT_ID, mail, ALLOWED_EXTENSIONS
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_dance.contrib.google import google
@@ -37,6 +37,7 @@ def register_page():
         }
 
         response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data, timeout=10)      #To check the recpatcha response submitted by user to verify the human.
+       
         result = response.json()
         print(result)
 
@@ -163,9 +164,35 @@ def allowed_file(filename):                                     #function used t
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route("/organizer/<role>")                                        #route to redirect the event organizer.
+@app.route("/organizer/<role>")                                        #Route to display the current events under an organizer and option to create a new one.
 def organizer_page(role):
     return render_template('organizer.html', role=role)
+
+@app.route("/event-details", methods=['GET', 'POST'])                                #To create and store new event details 
+def event_details_form():
+    form = EventForm()
+    if form.validate_on_submit():
+        event_to_create = Event(category=form.category.data,
+        title=form.title.data,
+        acronym=form.acronym.data,
+        web_page_url=form.web_page_url.data,
+        venue=form.venue.data,
+        city=form.city.data,
+        country=form.country.data,
+        first_day=form.first_day.data,
+        last_day=form.last_day.data,
+        primary_area=form.primary_area.data,
+        secondary_area=form.secondary_area.data,
+        area_notes=form.area_notes.data,
+        organizer_name=form.organizer_name.data,
+        organizer_web_page=form.organizer_web_page.data,
+        phone_no=form.phone_no.data,
+        other_info=form.other_info.data
+        )
+        return redirect(url_for('organizer_page'))
+
+    return render_template('event_form.html', form=form)
+    
 
 @app.route('/google-wait')                                      #Function to check if the current google session is correct or not.
 @login_is_required
