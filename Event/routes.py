@@ -189,7 +189,9 @@ def event_details_form():
         phone_no=form.phone_no.data,
         other_info=form.other_info.data
         )
-        return redirect(url_for('organizer_page'))
+        db.session.add(event_to_create)
+        db.session.commit() 
+        return redirect(url_for('event_details_form'))
 
     return render_template('event_form.html', form=form)
     
@@ -290,6 +292,12 @@ def callback():
     print(session["First_Name"])
 
     return redirect("/google-wait")
+
+
+
+
+# Admin authority to generate unique links for reviewers to send for thier registration.
+
 
 def generate_invite_links():                    #To generate unique invite links for reviewers to send by the admin. 
     token = secrets.token_hex(20)
