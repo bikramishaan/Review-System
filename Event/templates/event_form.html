@@ -7,7 +7,7 @@
 
     <div class="container w-25 float-left m-4 p-3">
         <h4>InReview New Event Request</h4>
-        <p>Please fill out the form and submit a send </p>
+        <p>Please fill out the form and submit a send reuqest.</p>
         <form class="m-6" method="POST" style="color:black">
             {{ form.hidden_tag() }}
 
@@ -57,8 +57,8 @@
 
             <br>
 
-            {{ form.organizer.label() }}
-            {{ form.organizer(class="form-control", placeholder="") }}
+            {{ form.organizer_name.label() }}
+            {{ form.organizer_name(class="form-control", placeholder="") }}
 
             {{ form.organizer_web_page.label() }}
             {{ form.organizer_web_page(class="form-control", placeholder="") }}

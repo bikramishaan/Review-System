@@ -61,7 +61,7 @@ class EventForm(FlaskForm):
     primary_area = SelectField(label="Primary area:", choices=[('biological sciences', 'Biological Sciences'), ('technology', 'Technology')], validators=[DataRequired()])
     secondary_area = SelectField(label="Secondary area:", choices=[('biological sciences', 'Biological Sciences'), ('technology', 'Technology')], validators=[DataRequired()])
     area_notes = StringField(label="Area notes:", validators=[DataRequired()])
-    organizer = StringField(label="Organizer:", validators=[DataRequired()])
+    organizer_name = StringField(label="Organizer:", validators=[DataRequired()])
     organizer_web_page = StringField(label="Organizer Web page:", validators=[DataRequired()])
     phone_no = StringField(label="Contact Phone number:", validators=[DataRequired()])
     other_info = StringField(label="Any other infromation:", validators=[DataRequired()])

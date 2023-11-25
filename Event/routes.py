@@ -172,6 +172,8 @@ def organizer_page(role):
 def event_details_form():
     form = EventForm()
     if form.validate_on_submit():
+        print(form.errors)
+        print(form.title.data)
         event_to_create = Event(category=form.category.data,
         title=form.title.data,
         acronym=form.acronym.data,
@@ -190,7 +192,7 @@ def event_details_form():
         other_info=form.other_info.data
         )
         db.session.add(event_to_create)
-        db.session.commit() 
+        db.session.commit()
         return redirect(url_for('event_details_form'))
 
     return render_template('event_form.html', form=form)
