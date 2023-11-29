@@ -7,4 +7,3 @@
 2) Remember to run all the packages stored in requirements.txt file before running the project using this command -
 
 python -m pip install -r requirements.txt
-
