@@ -1,6 +1,6 @@
 from Event import app
 from flask import render_template, redirect, url_for, flash, request, session, abort
-from Event.models import User
+from Event.models import User, Event, InviteLink
 from Event.forms import RegisterForm, LoginForm, UploadFileForm, AdminForm, InviteLinks, EventForm
 from Event import db, flow, GOOGLE_CLIENT_ID, mail, ALLOWED_EXTENSIONS
 from flask_login import login_user, logout_user, login_required, current_user
@@ -54,6 +54,7 @@ def register_page():
             db.session.add(user_to_create)
             db.session.commit()                                                         #Initial commit of the user before final registration.
             verification_link = url_for('verify_email', token=token, _external=True)
+            print(verification_link)
 
             # Mail to send to the registered users fto verify thier account.
             msg = Message('Verify Your Email', sender='bharat.aggarwal@iic.ac.in', recipients=[user_to_create.email_address])
@@ -171,7 +172,9 @@ def organizer_page(role):
 @app.route("/event-details", methods=['GET', 'POST'])                                #To create and store new event details 
 def event_details_form():
     form = EventForm()
-    if form.validate_on_submit():
+    if request.method == 'POST' and form.validate_on_submit():
+        print("Form data:", form.data)
+        print("Form is valid")
         print(form.errors)
         print(form.title.data)
         event_to_create = Event(category=form.category.data,
@@ -192,7 +195,13 @@ def event_details_form():
         other_info=form.other_info.data
         )
         db.session.add(event_to_create)
-        db.session.commit()
+        try:
+            db.session.commit()
+            flash('Event created successfully!', category='success')
+        except Exception as e:
+            db.session.rollback()
+            print(f"Database Error: {e}")
+
         return redirect(url_for('event_details_form'))
 
     return render_template('event_form.html', form=form)
@@ -301,13 +310,13 @@ def callback():
 # Admin authority to generate unique links for reviewers to send for thier registration.
 
 
-def generate_invite_links():                    #To generate unique invite links for reviewers to send by the admin. 
-    token = secrets.token_hex(20)
+# def generate_invite_links():                    #To generate unique invite links for reviewers to send by the admin. 
+#     token = secrets.token_hex(20)
 
-    base_url = 'http://127.0.0.1:5000/invite?token='
-    links = base_url + token
+#     # base_url = 'http://127.0.0.1:5000/invite?token='
+#     # links = base_url + token
 
-    return links
+#     return token
 
 @app.route("/admin", methods=['GET', 'POST'])
 def admin_login():
@@ -331,11 +340,35 @@ def admin_page(admin_username):
         number = form.number.data
 
         for i in range(number):                             #Looping upto the specified number mentioned to generate each unique link.
-            links = generate_invite_links()
-            Invite_links.append(links)
+            token = secrets.token_hex(16)
+            print(token)
+
+            link = url_for('verify_link', token=token, _external=True)
+            print(link)
+            # link = generate_invite_links()
+            Invite_links.append(link)
+
+            invite_link = InviteLink(verification_token=token,invite_link=link)            #store links in database by creating an instance of InviteLink model class.
+            db.session.add(invite_link)
             
+        db.session.commit()
+
         print(Invite_links)
         flash(f'Here are your {number} number of links', category='success')
 
     return render_template('admin_page.html', admin_username=admin_username, form=form, Invite_links=Invite_links)
 
+@app.route('/verify-invite')
+def verify_link():
+    token = request.args.get('token')
+    print(token)
+
+    invite = InviteLink.query.filter_by(verification_token=token).first()
+
+    if invite:
+        flash('Your email has been verified. You can now log in.', 'success')
+        return redirect("Blank Page")
+
+    else:
+        flash('Invalid verification token. Please try again.', 'danger')
+        abort(404)

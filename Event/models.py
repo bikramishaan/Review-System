@@ -56,4 +56,11 @@ class Event(db.Model):
     organizer_web_page = db.Column(db.String(length=100))
     phone_no = db.Column(db.String(length=15))
     other_info = db.Column(db.String(length=500))
-    
+
+
+class InviteLink(db.Model):
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    verification_token = db.Column(db.String(length=32), unique=True)
+    invite_link = db.Column(db.String(50), unique=True, nullable=False)
+    status = db.Column(db.String(20), default="Active")
+    Created_at = db.Column(db.DateTime(), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')), nullable=False)

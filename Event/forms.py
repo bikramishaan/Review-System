@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField, SelectField, DateTimeField
 from wtforms.validators import Length,EqualTo, Email, DataRequired, ValidationError, NumberRange
-from Event.models import User
+from Event.models import User, Event
 from flask_wtf.recaptcha import RecaptchaField
 
 class RegisterForm(FlaskForm):
