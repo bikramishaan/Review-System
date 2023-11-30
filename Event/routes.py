@@ -366,9 +366,13 @@ def verify_link():
     invite = InviteLink.query.filter_by(verification_token=token).first()
 
     if invite:
-        flash('Your email has been verified. You can now log in.', 'success')
-        return redirect("Blank Page")
+        flash('Invite is successfully accepted. Now please fill all the details and submit', 'success')
+        return redirect(url_for('reviewer_register'))
 
     else:
         flash('Invalid verification token. Please try again.', 'danger')
         abort(404)
+
+@app.route('/reviewer-register')
+def reviewer_register():
+    return render_template('reviewer_registration.html')
