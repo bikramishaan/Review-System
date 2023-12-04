@@ -56,6 +56,7 @@ class Event(db.Model):
     organizer_web_page = db.Column(db.String(length=100))
     phone_no = db.Column(db.String(length=15))
     other_info = db.Column(db.String(length=500))
+    is_approved = db.Column(db.Boolean, default=False)
 
 
 class InviteLink(db.Model):

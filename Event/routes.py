@@ -15,6 +15,8 @@ import requests
 from werkzeug.utils import secure_filename
 import os
 
+#Manual User
+
 #The Home Route is executed just right after running of the application.
 @app.route('/')             
 @app.route('/home')
@@ -89,6 +91,26 @@ def generate_verification_token(email):
 
     return token
 
+@app.route('/redirect')                                         #Redirect route to wait for user to verify their email.
+def redirect_page():
+    return render_template('redirect.html')
+
+@app.route('/verify')                                           #Route to verify the unique token send to a user to their mail to redirect them to login page.
+def verify_email():
+    token = request.args.get('token')
+    print(token)
+    user = User.query.filter_by(verification_token=token).first()
+
+    if user:
+        user.is_verified = True
+        print(user.is_verified)
+        db.session.commit()
+        flash('Your email has been verified. You can now log in.', 'success')
+        return redirect(url_for('login_page'))
+
+    else:
+        flash('Invalid verification token. Please try again.', 'danger')
+        return redirect(url_for('register_page'))
 
 #Manual login route
 @app.route("/login", methods=['GET', 'POST'])
@@ -122,6 +144,19 @@ def login_page():
     return render_template('login.html', form=form) 
 
 
+@app.route("/logout")                                           #logout Route to end the cuurent session.
+def logout_page():
+    logout_user()
+    session.clear()
+    flash('You have been logged out!', category='info')
+    return redirect(url_for('home_page'))
+
+''' Google authentication code was written from here.
+    '''
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#Google User
+
 '''The login required function to check if the google user is in session or not.'''
 
 def login_is_required(function):            #function to check if the current google id is in session or not.
@@ -135,114 +170,10 @@ def login_is_required(function):            #function to check if the current go
 
     return wrapper
 
-@app.route('/event-page/<role>')                   #route for redirecting the authenticated users to the main event page.
-def event_page(role):
-    return render_template('event_page.html', role=role)
-def google_event_page():
-    return render_template('event_page.html', google_id=session["google_id"], name=session["name"], Email_id=session["Email_id"])
-
-@app.route('/hackathon', methods=['GET', 'POST'])           #Separate Event details route
-def hackathon_page():
-    upload_form = UploadFileForm()                          
-    if upload_form.validate_on_submit():                    #Validating the successful upload done by user.
-        file = upload_form.file.data
-
-        if file.filename == '':                             
-            flash('No file selected for uploading')
-            return redirect(request.url)
-
-        if file and allowed_file(file.filename):            #checking if file extension is allowed
-            file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))     #The uploaded file get saved in the specified folder.
-            flash('File has been Succesfully uploaded.','success')
-        else:
-            flash('File did not uploaded!!! Allowed file types are txt, pdf, png, jpg, jpeg, gif', 'danger')
-            return redirect(request.url)
-    return render_template('hackathon.html', form=upload_form)
-
-
-
-def allowed_file(filename):                                     #function used to define all the allowed extensions.
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@app.route("/organizer/<role>")                                        #Route to display the current events under an organizer and option to create a new one.
-def organizer_page(role):
-    return render_template('organizer.html', role=role)
-
-@app.route("/event-details", methods=['GET', 'POST'])                                #To create and store new event details 
-def event_details_form():
-    form = EventForm()
-    if request.method == 'POST' and form.validate_on_submit():
-        print("Form data:", form.data)
-        print("Form is valid")
-        print(form.errors)
-        print(form.title.data)
-        event_to_create = Event(category=form.category.data,
-        title=form.title.data,
-        acronym=form.acronym.data,
-        web_page_url=form.web_page_url.data,
-        venue=form.venue.data,
-        city=form.city.data,
-        country=form.country.data,
-        first_day=form.first_day.data,
-        last_day=form.last_day.data,
-        primary_area=form.primary_area.data,
-        secondary_area=form.secondary_area.data,
-        area_notes=form.area_notes.data,
-        organizer_name=form.organizer_name.data,
-        organizer_web_page=form.organizer_web_page.data,
-        phone_no=form.phone_no.data,
-        other_info=form.other_info.data
-        )
-        db.session.add(event_to_create)
-        try:
-            db.session.commit()
-            flash('Event created successfully!', category='success')
-        except Exception as e:
-            db.session.rollback()
-            print(f"Database Error: {e}")
-
-        return redirect(url_for('event_details_form'))
-
-    return render_template('event_form.html', form=form)
-    
-
 @app.route('/google-wait')                                      #Function to check if the current google session is correct or not.
 @login_is_required
 def event_page_google():
     return redirect(url_for('google_event_page'))
-
-@app.route('/redirect')                                         #Redirect route to wait for user to verify their email.
-def redirect_page():
-    return render_template('redirect.html')
-
-@app.route('/verify')                                           #Route to verify the unique token send to a user to their mail to redirect them to login page.
-def verify_email():
-    token = request.args.get('token')
-    print(token)
-    user = User.query.filter_by(verification_token=token).first()
-
-    if user:
-        user.is_verified = True
-        print(user.is_verified)
-        db.session.commit()
-        flash('Your email has been verified. You can now log in.', 'success')
-        return redirect(url_for('login_page'))
-
-    else:
-        flash('Invalid verification token. Please try again.', 'danger')
-        return redirect(url_for('register_page'))
-
-
-@app.route("/logout")                                           #logout Route to end the cuurent session.
-def logout_page():
-    logout_user()
-    session.clear()
-    flash('You have been logged out!', category='info')
-    return redirect(url_for('home_page'))
-
-''' Google authentication code was written from here.
-    '''
 
 @app.route('/google-login')                                     #The google login route to initialize the Google OAuth 2.O login process. 
 def google_login():
@@ -304,8 +235,85 @@ def callback():
 
     return redirect("/google-wait")
 
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#Event Details
+
+@app.route('/event-page/<role>')                   #route for redirecting the authenticated users to the main event page.
+def event_page(role):
+    return render_template('event_page.html', role=role)
+def google_event_page():
+    return render_template('event_page.html', google_id=session["google_id"], name=session["name"], Email_id=session["Email_id"])
+
+@app.route('/hackathon', methods=['GET', 'POST'])           #Separate Event details route
+def hackathon_page():
+    upload_form = UploadFileForm()                          
+    if upload_form.validate_on_submit():                    #Validating the successful upload done by user.
+        file = upload_form.file.data
+
+        if file.filename == '':                             
+            flash('No file selected for uploading')
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):            #checking if file extension is allowed
+            file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))     #The uploaded file get saved in the specified folder.
+            flash('File has been Succesfully uploaded.','success')
+        else:
+            flash('File did not uploaded!!! Allowed file types are txt, pdf, png, jpg, jpeg, gif', 'danger')
+            return redirect(request.url)
+    return render_template('hackathon.html', form=upload_form)
 
 
+
+def allowed_file(filename):                                     #function used to define all the allowed extensions.
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#Organizer
+
+@app.route("/organizer/<role>")                                        #Route to display the current events under an organizer and option to create a new one.
+def organizer_page(role):
+    return render_template('organizer.html', role=role)
+
+@app.route("/submit-event-request", methods=['GET', 'POST'])                                #To create and store new event details 
+def submit_event_request():
+    form = EventForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        print("Form data:", form.data)
+        print("Form is valid")
+        print(form.errors)
+        print(form.title.data)
+        event_request = Event(category=form.category.data,
+        title=form.title.data,
+        acronym=form.acronym.data,
+        web_page_url=form.web_page_url.data,
+        venue=form.venue.data,
+        city=form.city.data,
+        country=form.country.data,
+        first_day=form.first_day.data,
+        last_day=form.last_day.data,
+        primary_area=form.primary_area.data,
+        secondary_area=form.secondary_area.data,
+        area_notes=form.area_notes.data,
+        organizer_name=form.organizer_name.data,
+        organizer_web_page=form.organizer_web_page.data,
+        phone_no=form.phone_no.data,
+        other_info=form.other_info.data,
+        is_approved = False
+        )
+        db.session.add(event_request)
+        try:
+            db.session.commit()
+            flash('Event request submitted for approval!', category='success')
+        except Exception as e:
+            db.session.rollback()
+            print(f"Database Error: {e}")
+
+        return redirect(url_for('submit_event_request'))
+
+    return render_template('event_form.html', form=form)
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#Admin
 
 # Admin authority to generate unique links for reviewers to send for thier registration.
 
@@ -318,21 +326,21 @@ def callback():
 
 #     return token
 
-@app.route("/admin", methods=['GET', 'POST'])
+@app.route("/admin-login", methods=['GET', 'POST'])
 def admin_login():
     form = AdminForm()                              #Initializes the form for Admin.
     if form.validate_on_submit():
         if form.username.data == 'user0615243' and form.password.data == '855e121a6fed048a30d89cb24c768d1e4c1f40bcc8a64dca61895ab0deb17144':            #Validating the admin details.
             admin_username = form.username.data
             flash(f'Success!! You are successfully logged in.', category='success')
-            return redirect(url_for('admin_page', admin_username=admin_username))
+            return redirect(url_for('admin', admin_username=admin_username))
         else:
             flash('Username and password are not matched! Please try again', category='danger')
 
     return render_template('admin_login.html', form=form)
 
-@app.route('/admin-page/<admin_username>', methods=['GET', 'POST'])
-def admin_page(admin_username):
+@app.route('/admin/<admin_username>', methods=['GET', 'POST'])
+def admin(admin_username):
     form = InviteLinks()                                    #Initializes the InviteLinks form. 
     Invite_links = []                                       #Initilizes a blank list to store all the invite links.
     
@@ -358,21 +366,44 @@ def admin_page(admin_username):
 
     return render_template('admin_page.html', admin_username=admin_username, form=form, Invite_links=Invite_links)
 
-@app.route('/verify-invite')
+@app.route('/verify-invite')                            #Invite link sent to reviewer is get verified here.
 def verify_link():
     token = request.args.get('token')
     print(token)
 
-    invite = InviteLink.query.filter_by(verification_token=token).first()
+    invite = InviteLink.query.filter_by(verification_token=token).first()           #It checks the token requested with the tokens generated by the admin.
 
     if invite:
         flash('Invite is successfully accepted. Now please fill all the details and submit', 'success')
-        return redirect(url_for('reviewer_register'))
+        return redirect(url_for('reviewer_register'))                               #It will redirect for reviewer registration.
 
     else:
         flash('Invalid verification token. Please try again.', 'danger')
         abort(404)
 
-@app.route('/reviewer-register')
+
+@app.route("/admin/event-requests", methods=['GET', 'POST'])
+def admin_event_requests():
+    event_requests = Event.query.filter_by(is_approved=False).all()
+    return render_template('admin_event_requests.html', event_requests=event_requests)
+
+
+@app.route("/admin/approve-event-request/<int:request_id>")                         #Approval Request Route
+def approve_event_request(request_id):
+    event_request = Event.query.get_or_404(request_id)
+    event_request.is_approved = True
+    db.session.commit()
+    flash('Event request approved!', 'success')
+    return redirect(url_for('admin_event_requests'))
+
+@app.route("/admin/reject-event-request/<int:request_id>")                          #Rejection Request Route
+def reject_event_request(request_id):
+    event_request = Event.query.get_or_404(request_id)
+    db.session.delete(event_request)
+    db.session.commit()
+    flash('Event request rejected!', 'danger')
+    return redirect(url_for('admin_event_requests'))
+
+@app.route('/reviewer-register')                                                    #Reviewer Registration Route
 def reviewer_register():
     return render_template('reviewer_registration.html')
