@@ -28,7 +28,7 @@
                                 <h2 class="card-title">{{ event.title }}</h2>
                                 <h6 class="card-text">{{ event.acronym }}</h6>
                                 <p class="card-text">Deadline: {{ event.last_day.strftime('%d/%m/%Y') }}</p>
-                                <a href="#" class="btn btn-primary">Regsiter Here</a>
+                                <a href="{{ url_for('event_registration', event_id=event.id) }}" class="btn btn-primary">Regsiter Here</a>
                             </div>
                         </div>
                     </div>

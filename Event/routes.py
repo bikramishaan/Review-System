@@ -249,8 +249,9 @@ def google_event_page():
     event_approved = Event.query.filter_by(is_approved=True).all()
     return render_template('event_page.html', google_id=session["google_id"], name=session["name"], Email_id=session["Email_id"], event_approved=event_approved)
 
-@app.route('/hackathon', methods=['GET', 'POST'])           #Separate Event details route
-def hackathon_page():
+@app.route('/event-registration/<int:event_id>', methods=['GET', 'POST'])           #Separate Event details route
+def event_registration(event_id):
+    event = Event.query.get_or_404(event_id)
     upload_form = UploadFileForm()                          
     if upload_form.validate_on_submit():                    #Validating the successful upload done by user.
         file = upload_form.file.data
@@ -265,7 +266,8 @@ def hackathon_page():
         else:
             flash('File did not uploaded!!! Allowed file types are txt, pdf, png, jpg, jpeg, gif', 'danger')
             return redirect(request.url)
-    return render_template('hackathon.html', form=upload_form)
+            
+    return render_template('event_registration.html', form=upload_form, event=event)
 
 
 
