@@ -8,6 +8,7 @@ import pytz
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+#Database for user personal details
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer(), primary_key=True, autoincrement = True)
     username = db.Column(db.String(length=30), nullable=False, unique=True)
@@ -38,6 +39,7 @@ class User(db.Model, UserMixin):
     def check_password_correction(self, attempted_password):
         return bcrypt.check_password_hash(self.hash_password, attempted_password)
 
+#Database for every event details
 class Event(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement = True)
     category = db.Column(db.String(length=30), nullable=False)
@@ -58,10 +60,27 @@ class Event(db.Model):
     other_info = db.Column(db.String(length=500))
     is_approved = db.Column(db.Boolean, default=False)
 
-
+#Database for user personal details
 class InviteLink(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     verification_token = db.Column(db.String(length=32), unique=True)
     invite_link = db.Column(db.String(50), unique=True, nullable=False)
     status = db.Column(db.String(20), default="Active")
     Created_at = db.Column(db.DateTime(), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')), nullable=False)
+
+#Database for reviewer professional detials
+class Reviewer(db.Model):
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    full_name = db.Column(db.String(20), nullable=False)
+    gender = db.Column(db.String(20))
+    year_of_birth = db.Column(db.Integer(), nullable=False)
+    email_address = db.Column(db.String(50), unique=True, nullable=False)
+    homepage_url = db.Column(db.String(100), unique=True)
+    google_scholar_url = db.Column(db.String(100), unique=True)
+    orcid_url = db.Column(db.String(100), unique=True)
+    position = db.Column(db.String(20), nullable=False)
+    start_year = db.Column(db.Integer(), nullable=False)
+    end_year = db.Column(db.Integer())
+    # institution_domain = db.Column(db.String(20), nullable=False)
+    # institution_name = db.Column(db.String(50), nullable=False)
+    # institution_country = db.Column(db.S)

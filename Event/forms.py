@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField, SelectField, DateTimeField
-from wtforms.validators import Length,EqualTo, Email, DataRequired, ValidationError, NumberRange
+from wtforms.validators import Length,EqualTo, Email, DataRequired, ValidationError, NumberRange, URL
 from Event.models import User, Event
 from flask_wtf.recaptcha import RecaptchaField
 
@@ -26,7 +26,7 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField(label="User Name:", validators=[DataRequired()])
     password = PasswordField(label="Password:", validators=[DataRequired()])
-    role = SelectField(label="Role:", choices=[('','Select Role'), ('participant', 'Participant'), ('organizer', 'Organizer')], validators=[DataRequired()])
+    role = SelectField(label="Role:", choices=[('','Select Role'), ('participant','Participant'), ('organizer','Organizer')], validators=[DataRequired()])
     submit = SubmitField(label='Sign In')
 
 class AdminForm(FlaskForm):
@@ -42,27 +42,42 @@ class InviteLinks(FlaskForm):
     number = IntegerField(
         label="Enter here:", 
         validators=[
-            DataRequired(message="This field is required."),
+            DataRequired(),
             NumberRange(min=1, max=999, message='Value must be between 1 and 999.')
         ]
     )
     submit = SubmitField(label="Generate Links")
 
 class EventForm(FlaskForm):
-    category = SelectField(label="Category:", choices=[('Conference', 'Conference'), ('Journal', 'Journal')], validators=[DataRequired()])
+    category = SelectField(label="Category:", choices=[('Conference','Conference'), ('Journal','Journal')], validators=[DataRequired()])
     title = StringField(label="Title:", validators=[DataRequired()])
     acronym = StringField(label="Acronym:", validators=[DataRequired()])
-    web_page_url = StringField(label="Web Page:", validators=[DataRequired()])
+    web_page_url = StringField(label="Web Page:", validators=[DataRequired(), URL()])
     venue = StringField(label="Venue:")
     city = StringField(label="City:", validators=[DataRequired()])
-    country = SelectField(label="Country:", choices=[('India', 'India'), ('China', 'China')], validators=[DataRequired()])
+    country = SelectField(label="Country:", choices=[('India','India'), ('China','China')], validators=[DataRequired()])
     first_day = DateTimeField(label="First day:", format='%d/%m/%Y', validators=[DataRequired()])
     last_day = DateTimeField(label="Last day:", format='%d/%m/%Y', validators=[DataRequired()])
-    primary_area = SelectField(label="Primary area:", choices=[('Biological Sciences', 'Biological Sciences'), ('Technology', 'Technology')], validators=[DataRequired()])
-    secondary_area = SelectField(label="Secondary area:", choices=[('Biological Sciences', 'Biological Sciences'), ('Technology', 'Technology')], validators=[DataRequired()])
+    primary_area = SelectField(label="Primary area:", choices=[('Biological Sciences','Biological Sciences'), ('Technology', 'Technology')], validators=[DataRequired()])
+    secondary_area = SelectField(label="Secondary area:", choices=[('Biological Sciences','Biological Sciences'), ('Technology', 'Technology')], validators=[DataRequired()])
     area_notes = StringField(label="Area notes:", validators=[DataRequired()])
     organizer_name = StringField(label="Organizer:", validators=[DataRequired()])
-    organizer_web_page = StringField(label="Organizer Web page:", validators=[DataRequired()])
+    organizer_web_page = StringField(label="Organizer Web page:", validators=[DataRequired(), URL()])
     phone_no = StringField(label="Contact Phone number:", validators=[DataRequired()])
     other_info = StringField(label="Any other infromation:", validators=[DataRequired()])
     submit = SubmitField(label='Send Request')  
+
+class ReviewerForm(FlaskForm):
+    full_name = StringField(label="Full Name", validators=[Length(min=2, max=30),DataRequired()])
+    gender = SelectField(label="Gender", 
+                         choices=[('','Choose a gender or type a custom gender'), ('Male','Male'), ('Female','Female'), ('Non-Binary','Non-Binary'), ('Not Specified','Not Specified')], validators=[DataRequired()])
+    year_of_birth = IntegerField(label="Year of Birth", validators=[DataRequired(), NumberRange(min=1923, max=2023)])
+    email_address = StringField(label="Email Address", validators=[Email(), DataRequired()])
+    homepage_url = StringField(label="Homepage URL", validators=[DataRequired(), URL()])
+    google_scholar_url = StringField(label="Google Scholar URL", validators=[DataRequired(), URL()])
+    orcid_url = StringField(label="ORCID URL", validators=[DataRequired(), URL()])
+    position = SelectField(label="Position",
+                           choices=[('','Choose or type a position'), ('Undergrad Student','Undergrad Student'), ('MS Student','MS Student'), ('PhD Student','PhD Student'), ('Postdoc','Postdoc'), ('Instructor','Instructor'), ('Lecturer','Lecturer'), ('Assistant Professor','Assistant Professor'), ('Associate Professor','Associate Professor'), ('Full Professor','Full Professor'), ('Emeritus','Emeritus'), ('Researcher','Researcher'), ('Principal Researcher','Principal Researcher'), ('Intern','Intern')])
+    start_year = IntegerField(label='Start', validators=[DataRequired()])
+    end_year = IntegerField(label='End')
+    submit = SubmitField(label='Register as Reviewer')

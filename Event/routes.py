@@ -1,7 +1,7 @@
 from Event import app
 from flask import render_template, redirect, url_for, flash, request, session, abort
-from Event.models import User, Event, InviteLink
-from Event.forms import RegisterForm, LoginForm, UploadFileForm, AdminForm, InviteLinks, EventForm
+from Event.models import User, Event, InviteLink, Reviewer
+from Event.forms import RegisterForm, LoginForm, UploadFileForm, AdminForm, InviteLinks, EventForm, ReviewerForm
 from Event import db, flow, GOOGLE_CLIENT_ID, mail, ALLOWED_EXTENSIONS
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_dance.contrib.google import google
@@ -418,6 +418,30 @@ def verify_link():
         flash('Invalid verification token. Please try again.', 'danger')
         abort(404)
 
-@app.route('/reviewer-register')                                                    #Reviewer Registration Route
+@app.route('/reviewer-register', methods=['GET', 'POST'])                                                    #Reviewer Registration Route
 def reviewer_register():
-    return render_template('reviewer_registration.html')
+    form = ReviewerForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        print('Form Data:', form.data)
+        reviewer_request = Reviewer(full_name=form.full_name.data,
+                                    gender=form.gender.data,
+                                    year_of_birth=form.year_of_birth.data,
+                                    email_address=form.email_address.data,
+                                    homepage_url=form.homepage_url.data,
+                                    google_scholar_url=form.google_scholar_url.data,
+                                    orcid_url=form.orcid_url.data,
+                                    position=form.position.data,
+                                    start_year=form.start_year.data,
+                                    end_year=form.end_year.data
+                                    )
+        db.session.add(reviewer_request)
+        try:
+            db.session.commit()
+            flash('Your Registration is successfully submitted for verification.', category='success')
+        except Exception as e:
+            db.session.rollback()
+            print(f"Database Error: {e}")
+
+        return redirect(url_for('reviewer_register'))
+    
+    return render_template('reviewer_registration.html', form=form)
