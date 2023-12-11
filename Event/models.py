@@ -54,7 +54,7 @@ class Event(db.Model):
     primary_area = db.Column(db.String(length=100))
     secondary_area = db.Column(db.String(length=100))
     area_notes = db.Column(db.String(length=200))
-    organizer_name = db.Column(db.String(length=30), nullable=False)
+    organizer_name = db.Column(db.String(length=30))
     organizer_web_page = db.Column(db.String(length=100))
     phone_no = db.Column(db.String(length=15))
     other_info = db.Column(db.String(length=500))
@@ -71,16 +71,33 @@ class InviteLink(db.Model):
 #Database for reviewer professional detials
 class Reviewer(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    #Personal details
     full_name = db.Column(db.String(20), nullable=False)
     gender = db.Column(db.String(20))
     year_of_birth = db.Column(db.Integer(), nullable=False)
     email_address = db.Column(db.String(50), unique=True, nullable=False)
+    #professional url details 
     homepage_url = db.Column(db.String(100), unique=True)
     google_scholar_url = db.Column(db.String(100), unique=True)
     orcid_url = db.Column(db.String(100), unique=True)
-    position = db.Column(db.String(20), nullable=False)
-    start_year = db.Column(db.Integer(), nullable=False)
-    end_year = db.Column(db.Integer())
-    # institution_domain = db.Column(db.String(20), nullable=False)
-    # institution_name = db.Column(db.String(50), nullable=False)
-    # institution_country = db.Column(db.S)
+    #education details
+    education_position = db.Column(db.String(20))
+    education_start_year = db.Column(db.Integer())
+    education_end_year = db.Column(db.Integer())
+    inst_domain = db.Column(db.String(20))
+    inst_name = db.Column(db.String(50))
+    inst_country = db.Column(db.String(50))
+    inst_state = db.Column(db.String(50))
+    inst_city = db.Column(db.String(50))
+    inst_department = db.Column(db.String(100))
+    # Work Experience details
+    current_position = db.Column(db.String(50), nullable=False)
+    current_company = db.Column(db.String(50), nullable=False)
+    current_start_year = db.Column(db.Integer(), nullable=False)
+    current_end_year = db.Column(db.Integer())
+    current_city = db.Column(db.String(50))
+    current_country = db.Column(db.String(50), nullable=False)
+    #Area of Interests
+    area_of_interest = db.Column(db.String(200), nullable=False)
+
+

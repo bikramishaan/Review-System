@@ -421,8 +421,13 @@ def verify_link():
 @app.route('/reviewer-register', methods=['GET', 'POST'])                                                    #Reviewer Registration Route
 def reviewer_register():
     form = ReviewerForm()
+    print('Form Data:', form.data)
+    print(form.errors)
+
     if request.method == 'POST' and form.validate_on_submit():
         print('Form Data:', form.data)
+        print(form.errors)
+        print(form.full_name)
         reviewer_request = Reviewer(full_name=form.full_name.data,
                                     gender=form.gender.data,
                                     year_of_birth=form.year_of_birth.data,
@@ -430,9 +435,22 @@ def reviewer_register():
                                     homepage_url=form.homepage_url.data,
                                     google_scholar_url=form.google_scholar_url.data,
                                     orcid_url=form.orcid_url.data,
-                                    position=form.position.data,
-                                    start_year=form.start_year.data,
-                                    end_year=form.end_year.data
+                                    education_position=form.education_position.data,
+                                    education_start_year=form.education_start_year.data,
+                                    education_end_year=form.education_end_year.data,
+                                    inst_domain=form.inst_domain.data,
+                                    inst_name=form.inst_name.data,
+                                    inst_country=form.inst_country.data,
+                                    inst_state=form.inst_state.data,
+                                    inst_city=form.inst_city.data,
+                                    inst_department=form.inst_department.data,
+                                    current_position=form.current_position.data,
+                                    current_company=form.current_company.data,
+                                    current_start_year=form.current_start_year.data,
+                                    current_end_year=form.current_end_year.data,
+                                    current_city=form.current_city.data,
+                                    current_country=form.current_country.data,
+                                    area_of_interest=form.area_of_interest.data
                                     )
         db.session.add(reviewer_request)
         try:

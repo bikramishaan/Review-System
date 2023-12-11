@@ -43,15 +43,57 @@
 
             <br>
 
-            {{ form.position.label() }}
-            {{ form.position(class="form-control", placeholder="") }}
+            {{ form.education_position.label() }}
+            {{ form.education_position(class="form-control", placeholder="Choose or type a position") }}
 
-            {{ form.start_year.label() }}
-            {{ form.start_year(class="form-control", placeholder="") }}
+            {{ form.education_start_year.label() }}
+            {{ form.education_start_year(class="form-control", placeholder="start year") }}
 
-            {{ form.end_year.label() }}
-            {{ form.end_year(class="form-control", placeholder="") }}
+            {{ form.education_end_year.label() }}
+            {{ form.education_end_year(class="form-control", placeholder="end year") }}
 
+            {{ form.inst_domain.label() }}
+            {{ form.inst_domain(class="form-control", placeholder="Choose or type an institution")}}
+
+            {{ form.inst_name.label() }}
+            {{ form.inst_name(class="form-control", placeholder="Institution Name")}}
+
+            {{ form.inst_country.label() }}
+            {{ form.inst_country(class="form-control", placeholder="Institution Country/Religion")}}
+
+            {{ form.inst_state.label() }}
+            {{ form.inst_state(class="form-control", placeholder="Institution State/Province")}}
+
+            {{ form.inst_city.label() }}
+            {{ form.inst_city(class="form-control", placeholder="Institution City")}}
+
+            {{ form.inst_department.label() }}
+            {{ form.inst_department(class="form-control", placeholder="Department of Institution")}}
+
+            <br>    
+            
+            {{ form.current_position.label() }}
+            {{ form.current_position(class="form-control", placeholder="Enter your current work position")}}
+
+            {{ form.current_company.label() }}
+            {{ form.current_company(class="form-control", placeholder="Enter your current company name") }}
+
+            {{ form.current_start_year.label() }}
+            {{ form.current_start_year(class="form-control", placeholder="start year")}}
+
+            {{ form.current_end_year.label() }}
+            {{ form.current_end_year(class="form-control", placeholder="end year")}}
+
+            {{ form.current_city.label() }}
+            {{ form.current_city(class="form-control", placeholder="Company City")}}
+
+            {{ form.current_country.label() }}
+            {{ form.current_country(class="form-control", placeholder="Company State")}}
+
+            <br>
+
+            {{ form.area_of_interest.label() }}
+            {{ form.area_of_interest(class="form-control", placeholder="Area of Interests")}}
     
             <br><br>
 
