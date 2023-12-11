@@ -5,7 +5,7 @@
 
 {% block content %}
     <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3" style="background-color:rgb(16, 98, 112); color:white">
-        <div class="mx-auto my-5">
+        <div class="my-5" style="overflow-x: auto; max-height: 500px;">
             <h1 class="mb-4 font-weight-normal">Admin Event Requests</h1>
 
             {% if event_requests %}
@@ -15,10 +15,8 @@
                             <th>S.No.</th>
                             <th>Category</th>
                             <th>Title</th>
-                            <th>Acronym</th>
                             <th>Web Page</th>
                             <th>Venue</th>
-                            <th>City</th>
                             <th>Country</th>
                             <th>First Day</th>
                             <th>Last Day</th>
@@ -35,13 +33,11 @@
                     <tbody>
                         {% for event_request in event_requests %}
                             <tr class="table-info">
-                                <td>{{ loop.index }}</td>
+                                <td>{{ loop.index }}.</td>
                                 <td>{{ event_request.category }}</td>
                                 <td>{{ event_request.title }}</td>
-                                <td>{{ event_request.acronym }}</td>
                                 <td>{{ event_request.web_page_url }}</td>
                                 <td>{{ event_request.venue }}</td>
-                                <td>{{ event_request.city }}</td>
                                 <td>{{ event_request.country }}</td>
                                 <td>{{ event_request.first_day }}</td>
                                 <td>{{ event_request.last_day }}</td>

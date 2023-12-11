@@ -1,16 +1,65 @@
 {% extends 'base.html' %}
 {% block title %}
-    Welcome to Document Management System!
+    New Reviewer Registraion
 {% endblock %}
-
 {% block content %}
-    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center" style="background-color:rgb(16, 98, 112); color:white">
-        <div class="col-md-5 p-lg-5 mx-auto my-5">
-            <h1 class="display-12 font-weight-normal">InReview Web App</h1>
-            <p class="lead">Review management system with multilevel approval hierarchy.</p>
-            <a class="btn btn-primary" href="{{ url_for('register_page') }}">Get Started</a>
-        </div>
-        <div class="product-device box-shadow d-none d-md-block"></div>
-        <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
+<body>
+
+    <div class="container w-25 float-left m-4 p-3">
+        <h2>Reviewer Registration</h2>
+        <h6>Please fill out the form and register yourself.</h6>
+        <form class="m-6" method="POST" style="color:black" action="{{ url_for('reviewer_register')}}">
+            {{ form.csrf_token }}
+            {{ form.hidden_tag() }}
+
+            {{ form.full_name.label() }}
+            {{ form.full_name(class="form-control", placeholder="Enter your name here") }}
+
+            <br>
+
+            {{ form.gender.label() }}
+            {{ form.gender(class="form-control", placeholder="") }}
+
+            <br>
+
+            {{ form.year_of_birth.label() }}
+            {{ form.year_of_birth(class="form-control", placeholder="Enter your year of birth") }}
+
+            <br>
+
+            {{ form.email_address.label() }}
+            {{ form.email_address(class="form-control", placeholder="Enter only valid email address") }}
+
+            <br>
+
+            {{ form.homepage_url.label() }}
+            {{ form.homepage_url(class="form-control", placeholder="") }}
+
+            {{ form.google_scholar_url.label() }}
+            {{ form.google_scholar_url(class="form-control", placeholder="") }}
+
+            {{ form.orcid_url.label() }}
+            {{ form.orcid_url(class="form-control", placeholder="") }}
+
+            <br>
+
+            {{ form.position.label() }}
+            {{ form.position(class="form-control", placeholder="") }}
+
+            {{ form.start_year.label() }}
+            {{ form.start_year(class="form-control", placeholder="") }}
+
+            {{ form.end_year.label() }}
+            {{ form.end_year(class="form-control", placeholder="") }}
+
+    
+            <br><br>
+
+            {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+        
+        </form>
+
     </div>
+
+</body>
 {% endblock %}
