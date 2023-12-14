@@ -99,5 +99,6 @@ class Reviewer(db.Model):
     current_country = db.Column(db.String(50), nullable=False)
     #Area of Interests
     area_of_interest = db.Column(db.String(200), nullable=False)
+    is_approved = db.Column(db.Boolean, default=False)
 
 

@@ -211,7 +211,7 @@ def callback():
             email_address=id_info.get("email"),
             google_id=id_info.get("sub"),  # Store Google ID for future reference
             profile_picture_url=id_info.get("picture"),
-            Created_at = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')),
+            created_at = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')),
             last_login = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')),
             is_verified = True
             )
@@ -244,6 +244,7 @@ def event_page(role):
     event_approved = Event.query.filter_by(is_approved=True).all()
     return render_template('event_page.html', event_approved=event_approved, role=role)
 
+@app.route('/google-event-page')
 def google_event_page():
 
     event_approved = Event.query.filter_by(is_approved=True).all()
@@ -403,6 +404,34 @@ def reject_event_request(request_id):
     flash('Event request rejected!', 'danger')
     return redirect(url_for('admin_event_requests'))
 
+#------------------------------------------------------------------------------------------------------------
+@app.route("/admin/reviewer-request", methods=['GET', 'POST'])
+def admin_reviewer_requests():
+    admin_username = session.get('admin_username')
+    if not admin_username:
+        return redirect(url_for('admin_login'))
+    
+    reviewer_requests = Reviewer.query.filter_by(is_approved=False).all()
+    return render_template('admin_reviewer_requests.html', admin_username=admin_username, reviewer_requests=reviewer_requests)
+
+@app.route("/admin/approve-reviewer-request/<int:request_id>")                         #Approval Request Route
+def approve_reviewer_request(request_id):
+    reviewer_request = Reviewer.query.get_or_404(request_id)
+    reviewer_request.is_approved = True
+    db.session.commit()
+    flash('Reviewer request approved!', 'success')
+    return redirect(url_for('admin_reviewer_requests'))
+
+@app.route("/admin/reject-reviewer-request/<int:request_id>")                          #Rejection Request Route
+def reject_reviewer_request(request_id):
+    reviewer_request = Reviewer.query.get_or_404(request_id)
+    db.session.delete(reviewer_request)
+    db.session.commit()
+    flash('Reviewer request rejected!', 'danger')
+    return redirect(url_for('admin_reviewer_requests'))
+
+
+#Reviewers
 @app.route('/verify-invite')                            #Invite link sent to reviewer is get verified here.
 def verify_link():
     token = request.args.get('token')
