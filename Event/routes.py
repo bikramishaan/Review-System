@@ -303,6 +303,7 @@ def submit_event_request():
         secondary_area=form.secondary_area.data,
         area_notes=form.area_notes.data,
         organizer_name=form.organizer_name.data,
+        organizer_email_address=form.organizer_email_address.data,
         organizer_web_page=form.organizer_web_page.data,
         phone_no=form.phone_no.data,
         other_info=form.other_info.data,
@@ -312,6 +313,11 @@ def submit_event_request():
         try:
             db.session.commit()
             flash('Event request submitted for approval!', category='success')
+            # Mail send to the admin to notify about a new event request.
+            msg = Message('New Event Request', sender='bharat.aggarwal@iic.ac.in', recipients=['bharataggarwal2k2@gmail.com'])
+            msg.body = f'You received a new event request. Please verify the details asap and approve or reject the event.\n\n' \
+            f'Title - {form.title.data}\n'
+            mail.send(msg)
         except Exception as e:
             db.session.rollback()
             print(f"Database Error: {e}")
@@ -394,6 +400,11 @@ def approve_event_request(request_id):
     event_request.is_approved = True
     db.session.commit()
     flash('Event request approved!', 'success')
+
+    # Mail to send to the registered users fto verify thier account.
+    msg = Message('Event Approval', sender='bharat.aggarwal@iic.ac.in', recipients=[event_request.organizer_email_address])
+    msg.body = f'Your Event request for {event_request.title} is approved. You can now login to your dashboard to look after your event process.'
+    mail.send(msg)
     return redirect(url_for('admin_event_requests'))
 
 @app.route("/admin/reject-event-request/<int:request_id>")                          #Rejection Request Route
@@ -420,15 +431,21 @@ def approve_reviewer_request(request_id):
     reviewer_request.is_approved = True
     db.session.commit()
     flash('Reviewer request approved!', 'success')
+
+    # Mail to send to the registered users fto verify thier account.
+    msg = Message('Reviewer Profile Approved', sender='bharat.aggarwal@iic.ac.in', recipients=[reviewer_request.email_address])
+    msg.body = f'Your profile is verified. Please login to your account using your email id as username and password as you set during registration.'
+    mail.send(msg)
+
     return redirect(url_for('admin_reviewer_requests'))
 
-@app.route("/admin/reject-reviewer-request/<int:request_id>")                          #Rejection Request Route
-def reject_reviewer_request(request_id):
-    reviewer_request = Reviewer.query.get_or_404(request_id)
-    db.session.delete(reviewer_request)
-    db.session.commit()
-    flash('Reviewer request rejected!', 'danger')
-    return redirect(url_for('admin_reviewer_requests'))
+# @app.route("/admin/reject-reviewer-request/<int:request_id>")                          #Rejection Request Route
+# def reject_reviewer_request(request_id):
+#     reviewer_request = Reviewer.query.get_or_404(request_id)
+#     db.session.delete(reviewer_request)
+#     db.session.commit()
+#     flash('Reviewer request rejected!', 'danger')
+#     return redirect(url_for('admin_reviewer_requests'))
 
 
 #Reviewers
@@ -485,6 +502,10 @@ def reviewer_register():
         try:
             db.session.commit()
             flash('Your Registration is successfully submitted for verification.', category='success')
+            msg = Message('New Reviewer Request', sender='bharat.aggarwal@iic.ac.in', recipients=['bharataggarwal2k2@gmail.com'])
+            msg.body = f'You received a new reviewer request. Please verify the details asap and approve the reviewer profile.\n\n' \
+            f'Name - {form.full_name.data}\n'
+            mail.send(msg)
         except Exception as e:
             db.session.rollback()
             print(f"Database Error: {e}")

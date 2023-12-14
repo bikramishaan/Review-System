@@ -55,6 +55,7 @@ class Event(db.Model):
     secondary_area = db.Column(db.String(length=100))
     area_notes = db.Column(db.String(length=200))
     organizer_name = db.Column(db.String(length=30))
+    organizer_email_address = db.Column(db.String(length=30))
     organizer_web_page = db.Column(db.String(length=100))
     phone_no = db.Column(db.String(length=15))
     other_info = db.Column(db.String(length=500))
