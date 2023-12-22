@@ -60,6 +60,7 @@ class Event(db.Model):
     phone_no = db.Column(db.String(length=15))
     other_info = db.Column(db.String(length=500))
     is_approved = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
 
 #Database for user personal details
 class InviteLink(db.Model):
@@ -102,4 +103,14 @@ class Reviewer(db.Model):
     area_of_interest = db.Column(db.String(200), nullable=False)
     is_approved = db.Column(db.Boolean, default=False)
 
+class Submissions(db.Model):
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    ps_name = db.Column(db.String(20), nullable=False)
+    ps_email_address = db.Column(db.String(50), unique=True, nullable=False)
+    sub_datetime = db.Column(db.DateTime(), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')), nullable=False)
+    document_file = db.Column(db.String(255))
+    status = db.Column(db.String(20), default='Submitted')
+    user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
+    event_id = db.Column(db.Integer(), db.ForeignKey('event.id'), nullable=False)
 
+    

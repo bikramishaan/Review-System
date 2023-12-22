@@ -34,8 +34,8 @@ class AdminForm(FlaskForm):
     password = PasswordField(label="Password:", validators=[DataRequired()])
     submit = SubmitField(label='Sign In')
 
-class UploadFileForm(FlaskForm):
-    file = FileField("File", validators=[DataRequired()])
+class SubmissionsForm(FlaskForm):
+    document_file = FileField("File", validators=[DataRequired()])
     submit = SubmitField("Upload File")
 
 class InviteLinks(FlaskForm):

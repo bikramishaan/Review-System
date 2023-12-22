@@ -24,7 +24,7 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login_page"
 login_manager.login_message_category = "info" 
 
-ALLOWED_EXTENSIONS = set(['txt','pdf','png','jpg','jpeg','gif'])
+ALLOWED_EXTENSIONS = set(['txt','pdf','xls','xlsx','doc','docx','ppt','pptx'])
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587  # Port for sending email

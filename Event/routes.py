@@ -1,7 +1,7 @@
 from Event import app
 from flask import render_template, redirect, url_for, flash, request, session, abort
-from Event.models import User, Event, InviteLink, Reviewer
-from Event.forms import RegisterForm, LoginForm, UploadFileForm, AdminForm, InviteLinks, EventForm, ReviewerForm
+from Event.models import User, Event, InviteLink, Reviewer, Submissions
+from Event.forms import RegisterForm, LoginForm, SubmissionsForm, AdminForm, InviteLinks, EventForm, ReviewerForm
 from Event import db, flow, GOOGLE_CLIENT_ID, mail, ALLOWED_EXTENSIONS
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_dance.contrib.google import google
@@ -14,6 +14,7 @@ from flask_mail import Message
 import requests
 from werkzeug.utils import secure_filename
 import os
+from sqlalchemy import and_
 
 #Manual User
 
@@ -253,34 +254,50 @@ def google_event_page():
 @app.route('/event-registration/<int:event_id>', methods=['GET', 'POST'])           #Separate Event details route
 def event_registration(event_id):
     event = Event.query.get_or_404(event_id)
-    upload_form = UploadFileForm()                          
-    if upload_form.validate_on_submit():                    #Validating the successful upload done by user.
-        file = upload_form.file.data
+    submission_doc = SubmissionsForm()                          
+    if submission_doc.validate_on_submit():                    #Validating the successful upload done by user.
+        file = submission_doc.document_file.data
 
         if file.filename == '':                             
             flash('No file selected for uploading')
             return redirect(request.url)
 
-        if file and allowed_file(file.filename):            #checking if file extension is allowed
-            file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))     #The uploaded file get saved in the specified folder.
+        if file and allowed_file(file.filename):                #checking if file extension is allowed
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),file_path))     #The uploaded file get saved in the specified folder.
+            
+            submission = Submissions(
+                ps_name=current_user.full_name,
+                ps_email_address=current_user.email_address,
+                document_file=file_path,
+                user_id=current_user.id,
+                event_id=event_id
+            )
+
+            db.session.add(submission)
+            db.session.commit()
+
             flash('File has been Succesfully uploaded.','success')
+
         else:
-            flash('File did not uploaded!!! Allowed file types are txt, pdf, png, jpg, jpeg, gif', 'danger')
+            flash(f"File did not uploaded!!! Allowed file types are 'txt','pdf','xls','xlsx','doc','docx','ppt','pptx'", category='danger')
             return redirect(request.url)
             
-    return render_template('event_registration.html', form=upload_form, event=event)
-
-
+    return render_template('event_registration.html', form=submission_doc, event=event)
 
 def allowed_file(filename):                                     #function used to define all the allowed extensions.
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #Organizer
 
 @app.route("/organizer/<role>")                                        #Route to display the current events under an organizer and option to create a new one.
 def organizer_page(role):
-    return render_template('organizer.html', role=role)
+    organizer_events = Event.query.filter(and_(Event.user_id == current_user.id, Event.is_approved==True)).all()
+    return render_template('organizer.html', role=role, organizer_events=organizer_events)
 
 @app.route("/submit-event-request", methods=['GET', 'POST'])                                #To create and store new event details 
 def submit_event_request():
@@ -307,7 +324,8 @@ def submit_event_request():
         organizer_web_page=form.organizer_web_page.data,
         phone_no=form.phone_no.data,
         other_info=form.other_info.data,
-        is_approved = False
+        is_approved = False,
+        user_id = current_user.id
         )
         db.session.add(event_request)
         try:
