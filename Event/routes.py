@@ -1,7 +1,7 @@
 from Event import app
 from flask import render_template, redirect, url_for, flash, request, session, abort
-from Event.models import User, Event, InviteLink, Reviewer, Submissions
-from Event.forms import RegisterForm, LoginForm, SubmissionsForm, AdminForm, InviteLinks, EventForm, ReviewerForm
+from Event.models import User, Event, InviteLink, Reviewer, Submissions, Guest
+from Event.forms import RegisterForm, LoginForm, SubmissionsForm, AdminForm, InviteLinks, EventForm, ReviewerForm, CreateUserForm, ReviewerLoginForm
 from Event import db, flow, GOOGLE_CLIENT_ID, mail, ALLOWED_EXTENSIONS
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_dance.contrib.google import google
@@ -452,7 +452,8 @@ def approve_reviewer_request(request_id):
 
     # Mail to send to the registered users fto verify thier account.
     msg = Message('Reviewer Profile Approved', sender='bharat.aggarwal@iic.ac.in', recipients=[reviewer_request.email_address])
-    msg.body = f'Your profile is verified. Please login to your account using your email id as username and password as you set during registration.'
+    link = 'http://127.0.0.1:5000/create-user'
+    msg.body = f'Your profile is verified. Please click on the shared link to create a new user by creating a unique username and set the password. {link}'
     mail.send(msg)
 
     return redirect(url_for('admin_reviewer_requests'))
@@ -531,3 +532,55 @@ def reviewer_register():
         return redirect(url_for('reviewer_register'))
     
     return render_template('reviewer_registration.html', form=form)
+
+@app.route('/create-user', methods=['GET', 'POST'])
+def create_user():
+    form = CreateUserForm()
+    print(form.errors)
+
+    if request.method == 'POST' and form.validate_on_submit():
+        print('Form Data:', form.data)
+        print(form.errors)
+        user_created = Guest(username=form.username.data,
+                             password=form.password1.data                            
+                            )
+
+        db.session.add(user_created)
+        try:
+            db.session.commit()
+            flash('Succcess! User Created Successfully. You can now log in to your account.', category='success')
+        except Exception as e:
+            db.session.rollback()
+            print(f"Database Error: {e}")
+
+        return redirect(url_for('reviewer_login'))
+
+    return render_template('create_new_user.html', form=form)
+
+@app.route('/reviewer-login', methods=['GET', 'POST'])
+def reviewer_login():
+    form = ReviewerLoginForm()
+    print(form.errors)
+
+    if form.validate_on_submit():
+        attempted_reviewer = Guest.query.filter_by(username=form.username.data).first()
+        print(attempted_reviewer.username)
+        print(attempted_reviewer.password)
+
+        if attempted_reviewer:
+            return redirect(url_for('reviewer_dashboard'))
+
+        else:
+            flash('Username and password are not match! or your profile is not verified. Please try again', category='danger')
+            return redirect(url_for('create_user'))
+
+    return render_template('reviewer_login.html', form=form)
+
+
+@app.route('/reviewer-dashboard', methods=['GET', 'POST'])
+def reviewer_dashboard():
+
+    return render_template('event_page.html')
+
+        
+        

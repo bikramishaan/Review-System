@@ -96,3 +96,14 @@ class ReviewerForm(FlaskForm):
     current_country = StringField(label="", validators=[DataRequired()])
     area_of_interest = StringField(label="Research areas of interest", validators=[DataRequired()])
     submit = SubmitField(label='Register as Reviewer')
+
+class CreateUserForm(FlaskForm):
+    username = StringField(label="Create a Username", validators=[Length(min=8), Length(max=14), DataRequired()])
+    password1 = PasswordField(label="Create a Password", validators=[Length(min=8), DataRequired()])
+    password2 = PasswordField(label="Confirm Password", validators=[DataRequired(), EqualTo('password1')])
+    submit = SubmitField(label='Create User')
+
+class ReviewerLoginForm(FlaskForm):
+    username = StringField(label="Username:", validators=[Length(min=8), Length(max=14), DataRequired()])
+    password = PasswordField(label="Password:", validators=[Length(min=8), DataRequired()])
+    submit = SubmitField(label='Login')

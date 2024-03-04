@@ -114,3 +114,8 @@ class Submissions(db.Model):
     event_id = db.Column(db.Integer(), db.ForeignKey('event.id'), nullable=False)
 
     
+class Guest(db.Model):
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    username = db.Column(db.String(20), nullable=False, unique=True)
+    password = db.Column(db.String(length=60), nullable=True)
+
