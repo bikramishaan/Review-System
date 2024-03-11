@@ -26,7 +26,7 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField(label="User Name:", validators=[DataRequired()])
     password = PasswordField(label="Password:", validators=[DataRequired()])
-    role = SelectField(label="Role:", choices=[('','Select Role'), ('participant','Participant'), ('organizer','Organizer')], validators=[DataRequired()])
+    role = SelectField(label="Role:", choices=[('','Select Role'), ('participant','Participant'), ('organizer','Organizer'), ('reviewer','Reviewer')], validators=[DataRequired()])
     submit = SubmitField(label='Sign In')
 
 class AdminForm(FlaskForm):
@@ -103,7 +103,7 @@ class CreateUserForm(FlaskForm):
     password2 = PasswordField(label="Confirm Password", validators=[DataRequired(), EqualTo('password1')])
     submit = SubmitField(label='Create User')
 
-class ReviewerLoginForm(FlaskForm):
-    username = StringField(label="Username:", validators=[Length(min=8), Length(max=14), DataRequired()])
-    password = PasswordField(label="Password:", validators=[Length(min=8), DataRequired()])
-    submit = SubmitField(label='Login')
+# class ReviewerLoginForm(FlaskForm):
+#     username = StringField(label="Username:", validators=[Length(min=8), Length(max=14), DataRequired()])
+#     password = PasswordField(label="Password:", validators=[Length(min=8), DataRequired()])
+#     submit = SubmitField(label='Login')

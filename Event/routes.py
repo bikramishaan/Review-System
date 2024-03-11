@@ -1,7 +1,7 @@
 from Event import app
 from flask import render_template, redirect, url_for, flash, request, session, abort
 from Event.models import User, Event, InviteLink, Reviewer, Submissions, Guest
-from Event.forms import RegisterForm, LoginForm, SubmissionsForm, AdminForm, InviteLinks, EventForm, ReviewerForm, CreateUserForm, ReviewerLoginForm
+from Event.forms import RegisterForm, LoginForm, SubmissionsForm, AdminForm, InviteLinks, EventForm, ReviewerForm, CreateUserForm
 from Event import db, flow, GOOGLE_CLIENT_ID, mail, ALLOWED_EXTENSIONS
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_dance.contrib.google import google
@@ -119,28 +119,44 @@ def login_page():
     form = LoginForm()
     if form.validate_on_submit():                       #To validate the form submission by the user.
         attempted_user = User.query.filter_by(username=form.username.data).first()
-        print(attempted_user.username)
-        print(attempted_user.hash_password)
-        attempted_user.role = form.role.data
-        db.session.add(attempted_user)
-        db.session.commit()  
+        # print(attempted_user.username)
+        # print(attempted_user.hash_password)
+
+        attempted_reviewer = Guest.query.filter_by(username=form.username.data).first()
+        # print(attempted_reviewer.username)
+        # print(attempted_reviewer.password)
+
+        Role = form.role.data
+        # db.session.add(attempted_user)
+        # db.session.commit()
+
         print(f"Form Role: {form.role.data}")
-        print(f"User Role: {attempted_user.role}")
 
-        if attempted_user and attempted_user.is_verified and attempted_user.check_password_correction(attempted_password=form.password.data):
-              #To verify all the credentials of the user like username existence, password and verification done or not.
-            print(attempted_user.role)
-            login_user(attempted_user)
-            attempted_user.update_last_login()
+        if Role == 'participant' or Role == 'organizer':
 
-            if attempted_user.role == 'participant':
-                flash(f'Success!! Username - {attempted_user.username} ', category='success')
-                return redirect(url_for('event_page', role=attempted_user.role))        
+            if attempted_user and attempted_user.is_verified and attempted_user.check_password_correction(attempted_password=form.password.data):
+                #To verify all the credentials of the user like username existence, password and verification done or not.
+                print(attempted_user.role)
+                login_user(attempted_user)
+                attempted_user.update_last_login()
+
+                if Role == 'participant':
+                    flash(f'Success!! Username - {attempted_user.username} ', category='success')
+                    return redirect(url_for('event_page', role=attempted_user.role))        
+                if Role == 'organizer':
+                    flash(f'Success!! Username - {attempted_user.username} ', category='success')
+                    return redirect(url_for('organizer_page', role=attempted_user.role))
+                else:
+                    flash('Uggh! Your Credentials is not associated with the user role you selected. Please try again', category='danger')
             else:
-                flash(f'Success!! Username - {attempted_user.username} ', category='success')
-                return redirect(url_for('organizer_page', role=attempted_user.role))                 
+                flash('Username and password are not match! or Email Verification is not done. Please try again', category='danger')
+
         else:
-            flash('Username and password are not match! or Email Verification is not done. Please try again', category='danger')
+            if attempted_reviewer and attempted_reviewer.check_password_correction(attempted_password=form.password.data):
+                flash(f'Success!! Username - {attempted_reviewer.username}', category='success')
+                return redirect(url_for('reviewer_dashboard'))
+            else:
+                flash('Username and password are not match! or you are not registered as a reviewer. Please try again', category='danger')                                
 
     return render_template('login.html', form=form) 
 
@@ -542,7 +558,7 @@ def create_user():
         print('Form Data:', form.data)
         print(form.errors)
         user_created = Guest(username=form.username.data,
-                             password=form.password1.data                            
+                             hash_password=form.password1.data                            
                             )
 
         db.session.add(user_created)
@@ -553,34 +569,34 @@ def create_user():
             db.session.rollback()
             print(f"Database Error: {e}")
 
-        return redirect(url_for('reviewer_login'))
+        return redirect(url_for('login_page'))
 
     return render_template('create_new_user.html', form=form)
 
-@app.route('/reviewer-login', methods=['GET', 'POST'])
-def reviewer_login():
-    form = ReviewerLoginForm()
-    print(form.errors)
+# @app.route('/reviewer-login', methods=['GET', 'POST'])
+# def reviewer_login():
+#     form = ReviewerLoginForm()
+#     print(form.errors)
 
-    if form.validate_on_submit():
-        attempted_reviewer = Guest.query.filter_by(username=form.username.data).first()
-        print(attempted_reviewer.username)
-        print(attempted_reviewer.password)
+#     if form.validate_on_submit():
+#         attempted_reviewer = Guest.query.filter_by(username=form.username.data).first()
+#         print(attempted_reviewer.username)
+#         print(attempted_reviewer.password)
 
-        if attempted_reviewer:
-            return redirect(url_for('reviewer_dashboard'))
+#         if attempted_reviewer:
+#             return redirect(url_for('reviewer_dashboard'))
 
-        else:
-            flash('Username and password are not match! or your profile is not verified. Please try again', category='danger')
-            return redirect(url_for('create_user'))
+#         else:
+#             flash('Username and password are not match! or your profile is not verified. Please try again', category='danger')
+#             return redirect(url_for('create_user'))
 
-    return render_template('reviewer_login.html', form=form)
+#     return render_template('reviewer_login.html', form=form)
 
 
 @app.route('/reviewer-dashboard', methods=['GET', 'POST'])
 def reviewer_dashboard():
 
-    return render_template('event_page.html')
+    return render_template('reviewer_dashboard.html')
 
         
         
