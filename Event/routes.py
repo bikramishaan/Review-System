@@ -142,21 +142,24 @@ def login_page():
 
                 if Role == 'participant':
                     flash(f'Success!! Username - {attempted_user.username} ', category='success')
-                    return redirect(url_for('event_page', role=attempted_user.role))        
+                    return redirect(url_for('event_page'))            
                 if Role == 'organizer':
-                    flash(f'Success!! Username - {attempted_user.username} ', category='success')
-                    return redirect(url_for('organizer_page', role=attempted_user.role))
+                    flash(f'Success!! Welcome {attempted_user.username} ', category='success')
+                    return redirect(url_for('organizer_page'))
                 else:
                     flash('Uggh! Your Credentials is not associated with the user role you selected. Please try again', category='danger')
             else:
-                flash('Username and password are not match! or Email Verification is not done. Please try again', category='danger')
+                flash('Username and password are not match! or Email Verification is not done or You are not registered as a reviewer. Please try again', category='danger')
 
         else:
-            if attempted_reviewer and attempted_reviewer.check_password_correction(attempted_password=form.password.data):
-                flash(f'Success!! Username - {attempted_reviewer.username}', category='success')
-                return redirect(url_for('reviewer_dashboard'))
-            else:
-                flash('Username and password are not match! or you are not registered as a reviewer. Please try again', category='danger')                                
+            try:
+                if attempted_reviewer and attempted_reviewer.check_password_correction(attempted_password=form.password.data):
+                    flash(f'Success!! Welcome {attempted_reviewer.username}', category='success')
+                    return redirect(url_for('reviewer_dashboard'))
+                else:
+                    flash('Username and password are not match! or you are not registered as a reviewer. Please try again', category='danger')
+            except ValueError as e:
+                print("Error Verifying password", e)
 
     return render_template('login.html', form=form) 
 
@@ -255,11 +258,11 @@ def callback():
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #Event Details
 
-@app.route('/event-page/<role>')                   #route for redirecting the authenticated users to the main event page.
-def event_page(role):
+@app.route('/event-page')                   #route for redirecting the authenticated users to the main event page.
+def event_page():
 
     event_approved = Event.query.filter_by(is_approved=True).all()
-    return render_template('event_page.html', event_approved=event_approved, role=role)
+    return render_template('event_page.html', event_approved=event_approved)
 
 @app.route('/google-event-page')
 def google_event_page():
@@ -310,10 +313,10 @@ def allowed_file(filename):                                     #function used t
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #Organizer
 
-@app.route("/organizer/<role>")                                        #Route to display the current events under an organizer and option to create a new one.
-def organizer_page(role):
+@app.route("/organizer")                                        #Route to display the current events under an organizer and option to create a new one.
+def organizer_page():
     organizer_events = Event.query.filter(and_(Event.user_id == current_user.id, Event.is_approved==True)).all()
-    return render_template('organizer.html', role=role, organizer_events=organizer_events)
+    return render_template('organizer.html', organizer_events=organizer_events)
 
 @app.route("/submit-event-request", methods=['GET', 'POST'])                                #To create and store new event details 
 def submit_event_request():
@@ -558,7 +561,7 @@ def create_user():
         print('Form Data:', form.data)
         print(form.errors)
         user_created = Guest(username=form.username.data,
-                             hash_password=form.password1.data                            
+                             password=form.password1.data                            
                             )
 
         db.session.add(user_created)

@@ -21,7 +21,6 @@ class User(db.Model, UserMixin):
     last_login = db.Column(db.DateTime(), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Kolkata')), nullable=True)
     verification_token = db.Column(db.String(length=32), unique=True)
     is_verified = db.Column(db.Boolean, default=False)
-    role = db.Column(db.String(length=20), nullable=True)
     '''filename = db.Column(db.String(50))
     Image_data = db.Column(db.LargeBinary)'''
 
@@ -127,4 +126,4 @@ class Guest(db.Model):
     def password(self, plain_text_password):
         self.hash_password = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
     def check_password_correction(self, attempted_password):
-        return bcrypt.check_password_hash(self.hsh_password, attempted_password)
+        return bcrypt.check_password_hash(self.hash_password, attempted_password)
