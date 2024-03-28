@@ -4,13 +4,32 @@
 {% endblock %}
 
 {% block content %}
-    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center" style="background-color:rgb(16, 98, 112); color:white">
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center" style="background-color: rgb(16, 98, 112); color: white;">
         <div class="col-md-5 p-lg-5 mx-auto my-5">
             <h1 class="display-12 font-weight-normal">InReview Web App</h1>
             <p class="lead">Review management system with multilevel approval hierarchy.</p>
-            <a class="btn btn-primary" href="{{ url_for('register_page') }}">Get Started</a>
+            <a class="btn btn-primary btn-lg" href="{{ url_for('register_page') }}">Get Started</a>
         </div>
         <div class="product-device box-shadow d-none d-md-block"></div>
         <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h2 style="margin-top: 30px;">Login</h2>
+                <p>Already have an account? Login here to access your documents.</p>
+                <a class="btn btn-primary btn-lg btn-block" href="{{ url_for('login_page') }}">Login</a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h2 style="margin-top: 30px;">Register</h2>
+                <p>New user? Register now to start managing your documents.</p>
+                <a class="btn btn-primary btn-lg btn-block" href="{{ url_for('register_page') }}">Register</a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h2 style="margin-top: 30px;">Admin</h2>
+                <p>Administration access for managing users and permissions.</p>
+                <a class="btn btn-primary btn-lg btn-block" href="{{ url_for('login_page') }}">Admin</a>
+            </div>
+        </div>
     </div>
 {% endblock %}

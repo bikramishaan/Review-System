@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}
     Register Page
-{% endblock %}s
+{% endblock %}
 
-{%block content %}   
+{% block content %}
 <body class="text-center">
     <div class="container">
         <form action="?" method="POST" class="form-register" style="color:black">
@@ -63,17 +63,17 @@
 
             <br>
 
-            {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+            
+            {{ form.submit(class="btn btn-lg btn-block btn-primary animated-button") }}
 
             <br><br>
-            <div class="container text-center">
-                <a href="{{ url_for('google_login') }}" class="btn btn-primary">Sign Up with Google</a>
+            <div class=" text-center">
+                
+                <a href="{{ url_for('google_login') }}" class="btn btn-lg btn-primary btn-block animated-button">Sign Up with Google</a>
                 <br><br>
 
-                <div class="checkbox nb-3">
-                    <h6>Already have an account?</h6>
-                    <a class="btn btn-sm btn-secondary" href="{{ url_for('login_page') }}" >Login</a>
-                </div>
+                <h6>Already have an account?</h6>
+                <a class="btn btn-lg btn-secondary animated-button" href="{{ url_for('login_page') }}">Login</a>
             </div>
 
             <br><br>
@@ -81,4 +81,15 @@
         </form>
     </div>
 </body>
-{%endblock %}
+
+
+<style>
+    .animated-button {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .animated-button:hover {
+        transform: scale(1.1);
+    }
+</style>
+{% endblock %}

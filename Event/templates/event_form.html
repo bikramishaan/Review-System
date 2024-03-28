@@ -5,82 +5,125 @@
 {% block content %}
 <body>
 
-    <div class="container w-25 float-left m-4 p-3">
-        <h4>InReview New Event Request</h4>
-        <p>Please fill out the form and submit a send reuqest.</p>
-        <form class="m-6" method="POST" style="color:black" action="{{ url_for('submit_event_request')}}">
-            {{ form.csrf_token }}
-            {{ form.hidden_tag() }}
+    
 
-            {{ form.category.label() }}
-            {{ form.category(class="form-control", placeholder="") }}
+    <!-- New Event Form Section -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 shadow-lg rounded p-5">
+                <h4 class="mb-4">Submit New Event Request</h4>
+                <p class="mb-4">Please fill out the form and submit your request.</p>
+                <form method="POST" style="color:black" action="{{ url_for('submit_event_request')}}">
+                    {{ form.csrf_token }}
+                    {{ form.hidden_tag() }}
 
-            <br>
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        {{ form.category(class="form-control", placeholder="Enter event category") }}
+                    </div>
 
-            {{ form.title.label() }}
-            {{ form.title(class="form-control", placeholder="") }}
+                    <!-- Title -->
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        {{ form.title(class="form-control", placeholder="Enter event title") }}
+                    </div>
 
-            {{ form.acronym.label() }}
-            {{ form.acronym(class="form-control", placeholder="") }}
+                    <!-- Acronym -->
+                    <div class="form-group">
+                        <label for="acronym">Acronym:</label>
+                        {{ form.acronym(class="form-control", placeholder="Enter event acronym") }}
+                    </div>
 
-            <br>
+                    <!-- Web Page URL -->
+                    <div class="form-group">
+                        <label for="web_page_url">Web Page URL:</label>
+                        {{ form.web_page_url(class="form-control", placeholder="Enter event webpage URL") }}
+                    </div>
 
-            {{ form.web_page_url.label() }}
-            {{ form.web_page_url(class="form-control", placeholder="") }}
+                    <!-- Venue -->
+                    <div class="form-group">
+                        <label for="venue">Venue:</label>
+                        {{ form.venue(class="form-control", placeholder="Enter event venue") }}
+                    </div>
 
-            {{ form.venue.label() }}
-            {{ form.venue(class="form-control", placeholder="") }}
+                    <!-- City -->
+                    <div class="form-group">
+                        <label for="city">City:</label>
+                        {{ form.city(class="form-control", placeholder="Enter event city") }}
+                    </div>
 
-            {{ form.city.label() }}
-            {{ form.city(class="form-control", placeholder="") }}
+                    <!-- Country -->
+                    <div class="form-group">
+                        <label for="country">Country:</label>
+                        {{ form.country(class="form-control", placeholder="Enter event country") }}
+                    </div>
 
-            {{ form.country.label() }}
-            {{ form.country(class="form-control", placeholder="") }}
+                    <!-- First Day -->
+                    <div class="form-group">
+                        <label for="first_day">First Day:</label>
+                        {{ form.first_day(class="form-control", placeholder="Enter event first day") }}
+                    </div>
 
-            <br>
+                    <!-- Last Day -->
+                    <div class="form-group">
+                        <label for="last_day">Last Day:</label>
+                        {{ form.last_day(class="form-control", placeholder="Enter event last day") }}
+                    </div>
 
-            {{ form.first_day.label() }}
-            {{ form.first_day(class="form-control", placeholder="") }}
+                    <!-- Primary Area -->
+                    <div class="form-group">
+                        <label for="primary_area">Primary Area:</label>
+                        {{ form.primary_area(class="form-control", placeholder="Enter event primary area") }}
+                    </div>
 
-            {{ form.last_day.label() }}
-            {{ form.last_day(class="form-control", placeholder="") }}
+                    <!-- Secondary Area -->
+                    <div class="form-group">
+                        <label for="secondary_area">Secondary Area:</label>
+                        {{ form.secondary_area(class="form-control", placeholder="Enter event secondary area") }}
+                    </div>
 
-            <br>
+                    <!-- Area Notes -->
+                    <div class="form-group">
+                        <label for="area_notes">Area Notes:</label>
+                        {{ form.area_notes(class="form-control", placeholder="Enter area notes") }}
+                    </div>
 
-            {{ form.primary_area.label() }}
-            {{ form.primary_area(class="form-control", placeholder="") }}
+                    <!-- Organizer Name -->
+                    <div class="form-group">
+                        <label for="organizer_name">Organizer Name:</label>
+                        {{ form.organizer_name(class="form-control", placeholder="Enter organizer name") }}
+                    </div>
 
-            {{ form.secondary_area.label() }}
-            {{ form.secondary_area(class="form-control", placeholder="") }}
+                    <!-- Organizer Email Address -->
+                    <div class="form-group">
+                        <label for="organizer_email_address">Organizer Email Address:</label>
+                        {{ form.organizer_email_address(class="form-control", placeholder="Enter organizer email address") }}
+                    </div>
 
-            {{ form.area_notes.label() }}
-            {{ form.area_notes(class="form-control", placeholder="") }}
+                    <!-- Organizer Web Page -->
+                    <div class="form-group">
+                        <label for="organizer_web_page">Organizer Web Page:</label>
+                        {{ form.organizer_web_page(class="form-control", placeholder="Enter organizer web page") }}
+                    </div>
 
-            <br>
+                    <!-- Phone No -->
+                    <div class="form-group">
+                        <label for="phone_no">Phone No:</label>
+                        {{ form.phone_no(class="form-control", placeholder="Enter phone number") }}
+                    </div>
 
-            {{ form.organizer_name.label() }}
-            {{ form.organizer_name(class="form-control", placeholder="") }}
+                    <!-- Other Info -->
+                    <div class="form-group">
+                        <label for="other_info">Other Info:</label>
+                        {{ form.other_info(class="form-control", placeholder="Enter other info") }}
+                    </div>
 
-            {{ form.organizer_email_address.label() }}
-            {{ form.organizer_email_address(class="form-control", placeholder="")}}
-
-            {{ form.organizer_web_page.label() }}
-            {{ form.organizer_web_page(class="form-control", placeholder="") }}
-
-            {{ form.phone_no.label() }}
-            {{ form.phone_no(class="form-control", placeholder="") }}
-
-            <br>
-
-            {{ form.other_info.label() }}
-            {{ form.other_info(class="form-control", placeholder="") }}
-
-            <br><br>
-
-            {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
-        
-        </form>
-
+                    <button type="submit"class="btn btn-lg btn-primary btn-block animated-button mt-4">Submit Request</button>
+                
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -89,4 +132,14 @@
     </script>
     
 </body>
+<style>
+    .animated-button {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .animated-button:hover {
+        transform: scale(1.1);
+    }
+</style>
+
 {% endblock %}
